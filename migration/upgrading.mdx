@@ -1,0 +1,112 @@
+---
+title: Upgrading to v4
+description: Guide for upgrading to version 4 of React Native Date Picker
+---
+
+## Version 4 Upgrade Guide
+
+Version 4 of React Native Date Picker introduced support for React Native's new architecture (Fabric + Turbo Modules) while maintaining backward compatibility.
+
+### What's New in v4
+
+- Full support for React Native's new architecture (Fabric + Turbo Modules)
+- Requires React Native 0.71 or later for new architecture support
+- Backward compatible with older React Native versions using the legacy architecture
+
+### Breaking Changes
+
+**There are no breaking changes in v4.** You can safely upgrade by simply updating the version number in your `package.json`.
+
+```json
+{
+  "dependencies": {
+    "react-native-date-picker": "^4.0.0"
+  }
+}
+```
+
+### Installation Steps
+
+1. Update the package version:
+
+```bash
+# npm
+npm install react-native-date-picker@latest
+
+# yarn
+yarn add react-native-date-picker@latest
+
+# pnpm
+pnpm add react-native-date-picker@latest
+```
+
+2. Install iOS dependencies (skip for Expo projects):
+
+```bash
+cd ios && pod install
+```
+
+3. Rebuild your project:
+
+```bash
+# Expo projects
+npx expo run:android
+npx expo run:ios
+
+# Non-Expo projects
+npx react-native run-android
+npx react-native run-ios
+```
+
+### New Architecture Support
+
+If you're using React Native 0.71 or later and have enabled the new architecture, the date picker will automatically use Fabric and Turbo Modules. No additional configuration is required.
+
+To verify new architecture support is enabled, check that:
+
+- Your React Native version is 0.71 or higher
+- The `newArchEnabled` flag is set to `true` in your project configuration
+- The `react-native-date-picker` version is 4.3.0 or higher
+
+### Compatibility
+
+**Minimum Requirements:**
+- Xcode >= 11.6
+- React Native >= 0.57
+- For React Native 0.64: version 0.64.2 or later required
+- For Expo: SDK 42 or later (SDK 44.0.4+ for Expo SDK 44)
+- For new architecture: React Native 0.71+ and react-native-date-picker 4.3.0+
+
+### Migration Checklist
+
+- [ ] Update `react-native-date-picker` to version 4.x in `package.json`
+- [ ] Run `pod install` for iOS (skip for Expo)
+- [ ] Rebuild your app for both platforms
+- [ ] Test all date picker instances in your app
+- [ ] Verify modal and inline modes work correctly
+- [ ] Test on both iOS and Android devices
+
+### Troubleshooting
+
+If you encounter issues after upgrading:
+
+1. **Clean build**: Remove build artifacts and rebuild
+   ```bash
+   # iOS
+   cd ios && rm -rf build Pods && pod install
+   
+   # Android
+   cd android && ./gradlew clean
+   ```
+
+2. **Clear metro cache**:
+   ```bash
+   npx react-native start --reset-cache
+   ```
+
+3. **Verify linking**: For React Native < 0.60, ensure the package is properly linked
+   ```bash
+   npx react-native link react-native-date-picker
+   ```
+
+For additional help, see the [Linking Guide](/migration/linking) or check the [GitHub issues](https://github.com/henninghall/react-native-date-picker/issues).

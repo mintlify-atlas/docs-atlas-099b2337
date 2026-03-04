@@ -1,0 +1,171 @@
+---
+title: Using with Expo
+description: Setup and configuration guide for using React Native Date Picker with Expo
+---
+
+## Expo Compatibility
+
+React Native Date Picker works with Expo, but requires a specific setup since it uses native code.
+
+### Requirements
+
+<Warning>
+  This library **cannot** be used in the "Expo Go" app because it requires custom native code.
+</Warning>
+
+<Check>
+  You **can** use this library with [Expo Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+</Check>
+
+**Minimum Expo SDK Versions:**
+- Expo SDK 42 or later
+- For Expo SDK 44: version 44.0.4 or later is required
+
+### Why Expo Go Doesn't Work
+
+Expo Go is a pre-built app that contains a standard set of native modules. Since `react-native-date-picker` includes custom native code that isn't part of the Expo Go bundle, it cannot be used in that environment.
+
+For more information, see [Expo's documentation on custom native code](https://docs.expo.dev/workflow/customizing/).
+
+### Setup with Development Builds
+
+Development Builds allow you to create a custom version of Expo Go that includes your native code.
+
+#### 1. Install the Package
+
+```bash
+# npm
+npm install react-native-date-picker
+
+# yarn
+yarn add react-native-date-picker
+
+# pnpm
+pnpm add react-native-date-picker
+```
+
+#### 2. Create a Development Build
+
+No config plugin is needed. Simply create a new development build:
+
+```bash
+# For iOS (requires Mac)
+eas build --profile development --platform ios
+
+# For Android
+eas build --profile development --platform android
+```
+
+Or build locally:
+
+```bash
+# For iOS
+npx expo run:ios
+
+# For Android
+npx expo run:android
+```
+
+#### 3. Install and Run
+
+After building, install the development build on your device and start the development server:
+
+```bash
+npx expo start --dev-client
+```
+
+### Configuration
+
+No additional configuration is required. The date picker will work automatically once included in your development build.
+
+### SDK Version Compatibility
+
+| Expo SDK | Supported | Notes |
+|----------|-----------|-------|
+| SDK 42   | ✅        | Minimum required version |
+| SDK 43   | ✅        | Fully supported |
+| SDK 44   | ✅        | Requires SDK 44.0.4 or later |
+| SDK 45+  | ✅        | Fully supported |
+
+### Example Usage
+
+The usage in Expo is identical to standard React Native:
+
+```jsx
+import React, { useState } from 'react'
+import { Button, View } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default function App() {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <View>
+      <Button title="Open Date Picker" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </View>
+  )
+}
+```
+
+### Rebuilding After Updates
+
+Whenever you update `react-native-date-picker` or add other native dependencies, you'll need to create a new development build:
+
+```bash
+npx expo run:ios
+npx expo run:android
+```
+
+This ensures the native code changes are included in your app.
+
+### Troubleshooting
+
+#### "Unable to resolve module"
+
+If you see module resolution errors:
+
+1. Clear your cache:
+   ```bash
+   npx expo start --clear
+   ```
+
+2. Rebuild the development build:
+   ```bash
+   npx expo run:ios
+   npx expo run:android
+   ```
+
+#### "This package requires custom native code"
+
+This error appears when trying to use the library in Expo Go. You must use a development build instead.
+
+#### Build Failures
+
+If your build fails:
+
+1. Ensure your Expo SDK version meets the minimum requirements (SDK 42+)
+2. For SDK 44, verify you're using 44.0.4 or later
+3. Check that you're using a compatible React Native version (0.64.2+ for RN 0.64)
+4. Try cleaning your project:
+   ```bash
+   npx expo prebuild --clean
+   ```
+
+### Learn More
+
+- [Expo Development Builds Documentation](https://docs.expo.dev/development/introduction/)
+- [Custom Native Code in Expo](https://docs.expo.dev/workflow/customizing/)
+- [EAS Build Documentation](https://docs.expo.dev/build/introduction/)

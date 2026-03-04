@@ -1,0 +1,141 @@
+---
+title: Picker Modes
+description: Understanding the three picker modes - date, time, and datetime
+---
+
+React Native Date Picker supports three different modes that determine what type of date/time selection is available to users.
+
+## Mode Types
+
+The `mode` prop accepts three values:
+- `"datetime"` - Select both date and time (default)
+- `"date"` - Select only the date
+- `"time"` - Select only the time
+
+## DateTime Mode
+
+The datetime mode allows users to select both date and time in a single picker. This is the default mode and provides an optimal user experience by avoiding separate date and time picker popups.
+
+<Note>
+On datetime mode, today's date will be replaced with the string "Today" translated to the selected language.
+</Note>
+
+### Usage
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="datetime"
+/>
+```
+
+Since `datetime` is the default mode, you can also omit the mode property:
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+/>
+```
+
+### Platform Appearance
+
+<CardGroup cols={2}>
+  <Card title="iOS DateTime Picker">
+    The iOS picker displays date and time selection in a single unified interface.
+  </Card>
+  <Card title="Android DateTime Picker">
+    Android's datetime mode is unique, allowing both date and time selection without multiple popups.
+  </Card>
+</CardGroup>
+
+## Date Mode
+
+The date mode displays a datepicker with year, month, and date. The order of year-month-date will automatically adjust based on the locale setting.
+
+### Usage
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="date"
+/>
+```
+
+### Use Cases
+
+- Selecting birth dates
+- Choosing calendar dates
+- Setting start/end dates for date ranges
+- Any scenario where time is not relevant
+
+## Time Mode
+
+The time mode is used when only the time matters, without date selection. AM/PM display is automatically adjusted based on locale and user settings.
+
+### Usage
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+/>
+```
+
+### Minute Intervals
+
+The time mode works well with the `minuteInterval` prop to display times at specific intervals (e.g., 15-minute increments):
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  minuteInterval={15}
+/>
+```
+
+<Note>
+AM/PM display in time mode is determined by the locale on iOS and device settings on Android (unless overridden with `is24hourSource`).
+</Note>
+
+### Use Cases
+
+- Setting alarms
+- Scheduling appointments (time portion only)
+- Configuring time-based triggers
+- Any scenario where the date is not relevant
+
+## Platform Differences
+
+While all three modes work on both iOS and Android, there are some visual and behavioral differences:
+
+<Info>
+**iOS**: Uses native iOS picker wheels with platform-specific styling
+
+**Android**: Uses Material Design picker components with Android-specific styling
+</Info>
+
+## Combining with Other Props
+
+All modes can be combined with other props like `minimumDate`, `maximumDate`, and `locale`:
+
+```jsx
+<DatePicker
+  mode="date"
+  date={date}
+  onDateChange={setDate}
+  minimumDate={new Date("2020-01-01")}
+  maximumDate={new Date("2025-12-31")}
+  locale="en"
+/>
+```

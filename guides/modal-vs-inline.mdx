@@ -1,0 +1,275 @@
+---
+title: Modal vs Inline
+description: Learn when to use the built-in modal or inline picker rendering
+---
+
+React Native Date Picker offers two ways to display the picker: using the built-in modal or rendering it inline within your layout.
+
+## Modal Picker
+
+The built-in modal provides a pre-configured overlay that handles opening, closing, and user interactions with confirm/cancel buttons.
+
+### When to Use Modal
+
+Use the modal picker when:
+- You want a quick, out-of-the-box solution
+- You need a standard modal overlay experience
+- You want built-in confirm/cancel actions
+- You prefer minimal code for common use cases
+
+### Basic Modal Example
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button title="Open" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </>
+  )
+}
+```
+
+### Required Modal Props
+
+When using `modal={true}`, you must also provide:
+
+- `open` - Boolean controlling modal visibility
+- `onConfirm` - Callback when user confirms the selection
+- `onCancel` - Callback when user cancels or closes the modal
+
+```jsx
+<DatePicker
+  modal
+  open={isOpen}
+  date={selectedDate}
+  onConfirm={(date) => {
+    setIsOpen(false)
+    setSelectedDate(date)
+  }}
+  onCancel={() => {
+    setIsOpen(false)
+  }}
+/>
+```
+
+### Modal-Only Props
+
+These props only work when `modal={true}`:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `open` | boolean | Controls modal visibility |
+| `onConfirm` | (date: Date) => void | Called when user confirms |
+| `onCancel` | () => void | Called when user cancels or taps outside |
+| `title` | string \| null | Modal title text (set to null to hide) |
+| `confirmText` | string | Custom confirm button text (default: "Confirm") |
+| `cancelText` | string | Custom cancel button text (default: "Cancel") |
+| `buttonColor` | string | Color of confirm/cancel buttons (Android only) |
+
+### Customizing Modal Text
+
+```jsx
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  title="Select your birthday"
+  confirmText="Done"
+  cancelText="Go back"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+### Removing Modal Title
+
+Set `title` to `null` to remove the title entirely:
+
+```jsx
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  title={null}
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+## Inline Picker
+
+The inline picker renders directly in your component tree, giving you full control over layout and positioning.
+
+### When to Use Inline
+
+Use the inline picker when:
+- You want to build a custom modal or overlay
+- You need the picker to be part of your page layout
+- You want full control over the surrounding UI
+- You're building a custom form with embedded pickers
+
+### Basic Inline Example
+
+```jsx
+import React, { useState } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  return <DatePicker date={date} onDateChange={setDate} />
+}
+```
+
+### Inline-Only Props
+
+When using inline mode (without `modal` prop):
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `onDateChange` | (date: Date) => void | Called when user changes the date/time |
+| `onStateChange` | (state: 'spinning' \| 'idle') => void | Tracks spinner state (Android only) |
+
+<Warning>
+When using inline mode, do NOT set the `modal` prop. The `onConfirm` and `onCancel` callbacks will not work.
+</Warning>
+
+### Building a Custom Modal
+
+You can use the inline picker with your own modal component:
+
+```jsx
+import React, { useState } from 'react'
+import { Modal, View, Button, StyleSheet } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [tempDate, setTempDate] = useState(new Date())
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <>
+      <Button title="Select Date" onPress={() => setVisible(true)} />
+      
+      <Modal visible={visible} transparent animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.pickerContainer}>
+            <DatePicker date={tempDate} onDateChange={setTempDate} />
+            
+            <View style={styles.buttons}>
+              <Button 
+                title="Cancel" 
+                onPress={() => setVisible(false)} 
+              />
+              <Button 
+                title="Confirm" 
+                onPress={() => {
+                  setDate(tempDate)
+                  setVisible(false)
+                }} 
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
+  )
+}
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  pickerContainer: {
+    backgroundColor: 'white',
+    margin: 20,
+    borderRadius: 10,
+    padding: 20,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+})
+```
+
+### Tracking Spinner State
+
+Use `onStateChange` to track when the picker wheel is spinning (Android inline only):
+
+```jsx
+const [state, setState] = useState('idle')
+
+<DatePicker 
+  date={date}
+  onDateChange={setDate}
+  onStateChange={setState}
+/>
+
+<Button 
+  title="Confirm" 
+  disabled={state === 'spinning'}
+  onPress={handleConfirm}
+/>
+```
+
+<Info>
+This prevents users from confirming before the wheel has stopped spinning, ensuring they select the intended date.
+</Info>
+
+## Comparison
+
+| Feature | Modal | Inline |
+|---------|-------|--------|
+| Built-in overlay | Yes | No |
+| Confirm/Cancel buttons | Built-in | You implement |
+| Custom positioning | No | Yes |
+| Custom styling | Limited | Full control |
+| Setup complexity | Simple | More control needed |
+| Use case | Quick standard modal | Custom layouts/modals |
+
+## Choosing Between Modal and Inline
+
+<CardGroup cols={2}>
+  <Card title="Use Modal When" icon="square-check">
+    - You want a standard modal experience
+    - You need minimal setup
+    - Built-in confirm/cancel is sufficient
+    - You prefer the default styling
+  </Card>
+  <Card title="Use Inline When" icon="paintbrush">
+    - You need custom layout positioning
+    - You're building a custom modal
+    - You want full UI control
+    - The picker is part of a form
+  </Card>
+</CardGroup>

@@ -1,0 +1,454 @@
+---
+title: 'TypeScript'
+description: 'TypeScript definitions and type-safe usage'
+---
+
+## Overview
+
+The React Native Date Picker library is written with TypeScript and provides comprehensive type definitions out of the box. This ensures type safety and excellent IDE autocomplete support.
+
+## Type Definitions
+
+### DatePickerProps
+
+The main interface for the DatePicker component. It extends React Native's `ViewProps`, so all standard View properties are supported.
+
+```typescript
+import { Component } from 'react'
+import { ViewProps } from 'react-native'
+
+export interface DatePickerProps extends ViewProps {
+  // Required
+  date: Date
+
+  // Mode
+  mode?: 'date' | 'time' | 'datetime'
+
+  // Modal props
+  modal?: boolean
+  open?: boolean
+  onConfirm?: (date: Date) => void
+  onCancel?: () => void
+  confirmText?: string
+  cancelText?: string
+  title?: string | null
+
+  // Inline props
+  onDateChange?: (date: Date) => void
+
+  // Date constraints
+  minimumDate?: Date
+  maximumDate?: Date
+
+  // Time configuration
+  minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+  timeZoneOffsetInMinutes?: number
+  is24hourSource?: 'locale' | 'device'
+
+  // Localization
+  locale?: string
+
+  // Styling
+  theme?: 'light' | 'dark' | 'auto'
+  buttonColor?: string
+  dividerColor?: string
+
+  // Event handlers
+  onStateChange?: (state: 'spinning' | 'idle') => void
+}
+```
+
+### DatePicker Component
+
+The default export is a React Component class:
+
+```typescript
+export default class DatePicker extends Component<DatePickerProps> {}
+```
+
+## Type-Safe Usage Examples
+
+### Basic Modal Implementation
+
+```typescript
+import React, { useState } from 'react'
+import { Button, View } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+const ModalExample: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date())
+  const [open, setOpen] = useState<boolean>(false)
+
+  const handleConfirm = (selectedDate: Date): void => {
+    setOpen(false)
+    setDate(selectedDate)
+  }
+
+  const handleCancel = (): void => {
+    setOpen(false)
+  }
+
+  return (
+    <View>
+      <Button title="Open Picker" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
+    </View>
+  )
+}
+
+export default ModalExample
+```
+
+### Basic Inline Implementation
+
+```typescript
+import React, { useState } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+const InlineExample: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date())
+
+  const handleDateChange = (newDate: Date): void => {
+    setDate(newDate)
+  }
+
+  return (
+    <DatePicker
+      date={date}
+      onDateChange={handleDateChange}
+    />
+  )
+}
+
+export default InlineExample
+```
+
+### Advanced Type-Safe Configuration
+
+```typescript
+import React, { useState } from 'react'
+import DatePicker, { DatePickerProps } from 'react-native-date-picker'
+
+type PickerMode = 'date' | 'time' | 'datetime'
+type PickerTheme = 'light' | 'dark' | 'auto'
+
+interface DatePickerConfig {
+  mode: PickerMode
+  theme: PickerTheme
+  locale: string
+  minuteInterval: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30
+}
+
+const AdvancedExample: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date())
+  
+  const config: DatePickerConfig = {
+    mode: 'datetime',
+    theme: 'dark',
+    locale: 'en_GB',
+    minuteInterval: 15,
+  }
+
+  const pickerProps: DatePickerProps = {
+    date,
+    onDateChange: setDate,
+    ...config,
+    minimumDate: new Date('2020-01-01'),
+    maximumDate: new Date('2030-12-31'),
+  }
+
+  return <DatePicker {...pickerProps} />
+}
+
+export default AdvancedExample
+```
+
+### Using with Date Range Constraints
+
+```typescript
+import React, { useState, useMemo } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+interface DateRange {
+  start: Date
+  end: Date
+}
+
+const DateRangeExample: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+  const dateRange: DateRange = useMemo(() => ({
+    start: new Date('2023-01-01'),
+    end: new Date('2025-12-31'),
+  }), [])
+
+  const handleDateChange = (date: Date): void => {
+    // Type-safe date handling
+    if (date >= dateRange.start && date <= dateRange.end) {
+      setSelectedDate(date)
+    }
+  }
+
+  return (
+    <DatePicker
+      date={selectedDate}
+      onDateChange={handleDateChange}
+      minimumDate={dateRange.start}
+      maximumDate={dateRange.end}
+      mode="date"
+    />
+  )
+}
+
+export default DateRangeExample
+```
+
+### Spinner State Tracking
+
+```typescript
+import React, { useState } from 'react'
+import { Button, View } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+type SpinnerState = 'spinning' | 'idle'
+
+const StateTrackingExample: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date())
+  const [spinnerState, setSpinnerState] = useState<SpinnerState>('idle')
+
+  const handleStateChange = (state: SpinnerState): void => {
+    setSpinnerState(state)
+  }
+
+  const isSpinning: boolean = spinnerState === 'spinning'
+
+  return (
+    <View>
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        onStateChange={handleStateChange}
+      />
+      <Button
+        title="Confirm"
+        disabled={isSpinning}
+        onPress={() => console.log('Confirmed:', date)}
+      />
+    </View>
+  )
+}
+
+export default StateTrackingExample
+```
+
+### Custom Hook for Date Picker State
+
+```typescript
+import { useState, useCallback } from 'react'
+
+interface UseDatePickerReturn {
+  date: Date
+  open: boolean
+  openPicker: () => void
+  closePicker: () => void
+  handleConfirm: (selectedDate: Date) => void
+  handleCancel: () => void
+}
+
+function useDatePicker(initialDate: Date = new Date()): UseDatePickerReturn {
+  const [date, setDate] = useState<Date>(initialDate)
+  const [open, setOpen] = useState<boolean>(false)
+
+  const openPicker = useCallback((): void => {
+    setOpen(true)
+  }, [])
+
+  const closePicker = useCallback((): void => {
+    setOpen(false)
+  }, [])
+
+  const handleConfirm = useCallback((selectedDate: Date): void => {
+    setDate(selectedDate)
+    setOpen(false)
+  }, [])
+
+  const handleCancel = useCallback((): void => {
+    setOpen(false)
+  }, [])
+
+  return {
+    date,
+    open,
+    openPicker,
+    closePicker,
+    handleConfirm,
+    handleCancel,
+  }
+}
+
+// Usage
+import React from 'react'
+import { Button, View } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+const HookExample: React.FC = () => {
+  const picker = useDatePicker()
+
+  return (
+    <View>
+      <Button title="Open" onPress={picker.openPicker} />
+      <DatePicker
+        modal
+        open={picker.open}
+        date={picker.date}
+        onConfirm={picker.handleConfirm}
+        onCancel={picker.handleCancel}
+      />
+    </View>
+  )
+}
+
+export default HookExample
+```
+
+### Timezone Handling
+
+```typescript
+import React, { useState, useMemo } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+interface Timezone {
+  name: string
+  offsetMinutes: number
+}
+
+const timezones: Timezone[] = [
+  { name: 'PST', offsetMinutes: -8 * 60 },
+  { name: 'EST', offsetMinutes: -5 * 60 },
+  { name: 'UTC', offsetMinutes: 0 },
+  { name: 'CET', offsetMinutes: 1 * 60 },
+  { name: 'JST', offsetMinutes: 9 * 60 },
+]
+
+const TimezoneExample: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date())
+  const [selectedTimezone, setSelectedTimezone] = useState<Timezone>(timezones[0])
+
+  const handleDateChange = (newDate: Date): void => {
+    setDate(newDate)
+  }
+
+  return (
+    <DatePicker
+      date={date}
+      onDateChange={handleDateChange}
+      timeZoneOffsetInMinutes={selectedTimezone.offsetMinutes}
+      mode="datetime"
+    />
+  )
+}
+
+export default TimezoneExample
+```
+
+## Type Imports
+
+You can import the types separately if needed:
+
+```typescript
+import DatePicker, { DatePickerProps } from 'react-native-date-picker'
+import type { ViewProps } from 'react-native'
+
+// Use DatePickerProps in function signatures
+const renderPicker = (props: DatePickerProps) => {
+  return <DatePicker {...props} />
+}
+```
+
+## Best Practices
+
+### 1. Always Type Your State
+
+```typescript
+// Good
+const [date, setDate] = useState<Date>(new Date())
+const [open, setOpen] = useState<boolean>(false)
+
+// Avoid (implicit any)
+const [date, setDate] = useState(new Date())
+```
+
+### 2. Use Proper Callback Types
+
+```typescript
+// Good
+const handleConfirm = (selectedDate: Date): void => {
+  setDate(selectedDate)
+}
+
+// Avoid
+const handleConfirm = (selectedDate) => {
+  setDate(selectedDate)
+}
+```
+
+### 3. Leverage Union Types
+
+```typescript
+type PickerMode = 'date' | 'time' | 'datetime'
+
+const [mode, setMode] = useState<PickerMode>('date')
+// TypeScript will prevent invalid modes
+```
+
+### 4. Use Type Guards for Date Validation
+
+```typescript
+function isValidDateRange(min: Date, max: Date, selected: Date): boolean {
+  return selected >= min && selected <= max
+}
+
+const handleDateChange = (date: Date): void => {
+  if (isValidDateRange(minimumDate, maximumDate, date)) {
+    setDate(date)
+  }
+}
+```
+
+## Common Type Errors and Solutions
+
+### Error: Type 'string' is not assignable to type 'Date'
+
+```typescript
+// Wrong
+<DatePicker date="2024-01-01" />
+
+// Correct
+<DatePicker date={new Date('2024-01-01')} />
+```
+
+### Error: Property 'onDateChange' does not exist on modal picker
+
+```typescript
+// Wrong - onDateChange is for inline mode only
+<DatePicker modal date={date} onDateChange={setDate} />
+
+// Correct - use onConfirm for modal
+<DatePicker modal date={date} onConfirm={setDate} />
+```
+
+### Error: minuteInterval must be specific values
+
+```typescript
+// Wrong
+<DatePicker minuteInterval={7} />
+
+// Correct - only specific intervals allowed
+<DatePicker minuteInterval={15} />
+```

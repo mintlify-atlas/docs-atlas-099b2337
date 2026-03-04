@@ -1,0 +1,354 @@
+---
+title: Troubleshooting
+description: Common issues and solutions for React Native Date Picker
+---
+
+This guide covers common issues you may encounter when using React Native Date Picker and how to resolve them.
+
+## Android Production Crashes
+
+### Problem
+
+Your Android app crashes in production/release mode, but works fine in development.
+
+### Solution
+
+If you have enabled [Proguard](https://facebook.github.io/react-native/docs/signed-apk-android#enabling-proguard-to-reduce-the-size-of-the-apk-optional) for Android, you need to add exceptions for date picker classes.
+
+Add these lines to your Proguard file (usually `android/app/proguard-rules.pro`):
+
+```
+-keep public class net.time4j.android.ApplicationStarter
+-keep public class net.time4j.PrettyTime
+```
+
+After adding these rules, rebuild your app for production.
+
+<Warning>
+Without these Proguard rules, the date picker will be stripped from your production build, causing crashes when the picker is used.
+</Warning>
+
+## Linking Issues
+
+### Problem
+
+The app builds successfully but the date picker doesn't appear or throws errors about native modules.
+
+### Solution
+
+This package supports automatic linking. Follow these steps:
+
+1. **Install the package**
+   ```sh
+   npm install react-native-date-picker
+   # or
+   yarn add react-native-date-picker
+   ```
+
+2. **Install pods** (iOS only, skip for Expo projects)
+   ```sh
+   cd ios && pod install
+   ```
+
+3. **Rebuild the project**
+   ```sh
+   # Expo projects
+   npx expo run:android
+   npx expo run:ios
+
+   # Non-expo projects
+   npx react-native run-android
+   npx react-native run-ios
+   ```
+
+### For React Native < 0.60
+
+If you're using React Native version below 0.60, automatic linking is not supported. Run:
+
+```sh
+npx react-native link react-native-date-picker
+```
+
+Then rebuild your project.
+
+### Manual Linking
+
+In some cases, you may need to manually link the package. See [this issue](https://github.com/henninghall/react-native-date-picker/issues/40) for detailed manual linking instructions.
+
+## Font Size Issues
+
+### Problem
+
+You want to change the font size of the date picker.
+
+### Solution for Android
+
+Open `android/app/src/main/res/values/styles.xml` and add this code right above the `</resources>` tag:
+
+```xml
+<style name="DatePickerTheme" parent="DatePickerBaseTheme">
+    <item name="android:textSize">25sp</item>
+</style>
+```
+
+Adjust the `25sp` value to your desired size.
+
+### Solution for iOS
+
+<Info>
+Font size is not possible to change on iOS out of the box due to platform limitations. However, there are some [iOS workarounds](https://github.com/henninghall/react-native-date-picker/discussions/171) available in the community.
+</Info>
+
+## Date Order Issues
+
+### Problem
+
+You want to change the date order (e.g., from MM/DD/YYYY to YYYY-MM-DD).
+
+### Solution
+
+The date order is determined by the `locale` prop. Set the locale to match your desired format:
+
+```jsx
+// French locale uses Day/Month/Year
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="fr"
+/>
+
+// Japanese locale uses Year/Month/Day
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="ja"
+/>
+
+// US English uses Month/Day/Year
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="en_US"
+/>
+```
+
+<Note>
+The locale determines the date order based on that region's conventions. You cannot customize the order independently of the locale.
+</Note>
+
+## 12/24-Hour Format Issues
+
+### Problem
+
+You want to control whether the picker shows 12-hour (AM/PM) or 24-hour format.
+
+### Solution
+
+**iOS**: The 12/24-hour format is determined by the `locale` prop:
+
+```jsx
+// French locale = 24-hour format
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="fr"
+/>
+
+// US English locale = 12-hour format with AM/PM
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="en_US"
+/>
+```
+
+**Android**: By default, Android uses the device's 12/24-hour setting. To use the locale setting instead:
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="fr"
+  is24hourSource="locale"
+/>
+```
+
+<Warning>
+It's NOT recommended to force a specific format. Users expect the picker to respect their device preferences.
+</Warning>
+
+## Expo Compatibility
+
+### Problem
+
+The picker doesn't work in Expo Go app.
+
+### Solution
+
+<Info>
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+- ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
+</Info>
+
+To use this library with Expo:
+
+1. Use Expo SDK 42 or later
+2. Create a development build:
+   ```sh
+   npx expo run:android
+   npx expo run:ios
+   ```
+
+You cannot use this library in the Expo Go app. Development builds are required.
+
+## React Native Version Requirements
+
+### Problem
+
+The picker doesn't work or causes build errors.
+
+### Solution
+
+Ensure you meet the minimum requirements:
+
+- **Xcode**: >= 11.6
+- **React Native**: >= 0.57
+- **React Native 0.64**: Must use 0.64.2 or later
+- **Expo**: SDK 42 or later
+- **Expo SDK 44**: Must use 44.0.4 or later
+
+If you're using an older version, upgrade your React Native or Expo installation.
+
+## Month/Year Only Picker
+
+### Problem
+
+You want to show only month and year selection (no day).
+
+### Solution
+
+<Warning>
+This is unfortunately not possible due to limitations in the native date picker components (DatePickerIOS and Android DatePicker).
+</Warning>
+
+Workaround: You can create a custom month-year picker using a different library like [react-native-wheel-pick](https://github.com/TronNatthakorn/react-native-wheel-pick).
+
+## Disabling Confirm Until Wheel Stops
+
+### Problem
+
+You want to prevent users from confirming before the picker wheel has stopped spinning (Android).
+
+### Solution
+
+Use the `onStateChange` prop to track the spinner state:
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [state, setState] = useState('idle')
+
+  return (
+    <>
+      <DatePicker 
+        date={date}
+        onDateChange={setDate}
+        onStateChange={setState}
+      />
+      <Button 
+        title="Confirm" 
+        disabled={state === 'spinning'}
+        onPress={() => console.log('Confirmed:', date)}
+      />
+    </>
+  )
+}
+```
+
+<Info>
+The `onStateChange` callback receives either `"spinning"` or `"idle"` as the state value. This only works with Android inline pickers.
+</Info>
+
+## New Architecture Support
+
+### Problem
+
+You're using React Native's new architecture (Fabric + Turbo Modules) and experiencing issues.
+
+### Solution
+
+This package supports React Native's new architecture from:
+- **React Native**: 0.71 and forward
+- **react-native-date-picker**: 4.3.0 and forward
+
+Ensure you're using compatible versions:
+
+```json
+{
+  "dependencies": {
+    "react-native": ">=0.71.0",
+    "react-native-date-picker": ">=4.3.0"
+  }
+}
+```
+
+## Upgrading to v4
+
+### Problem
+
+You're upgrading from v3 to v4 and want to know about breaking changes.
+
+### Solution
+
+<Info>
+There are no breaking changes in v4. Simply update the version number in your `package.json` and reinstall.
+</Info>
+
+```sh
+npm install react-native-date-picker@^4.0.0
+# or
+yarn add react-native-date-picker@^4.0.0
+```
+
+Then rebuild your app:
+
+```sh
+cd ios && pod install && cd ..
+npx react-native run-ios
+npx react-native run-android
+```
+
+## Getting Further Help
+
+If your issue isn't covered here:
+
+1. Check the [GitHub Issues](https://github.com/henninghall/react-native-date-picker/issues) for similar problems
+2. Search the [GitHub Discussions](https://github.com/henninghall/react-native-date-picker/discussions) for community solutions
+3. Create a new issue with:
+   - React Native version
+   - Package version
+   - Platform (iOS/Android)
+   - Minimal code to reproduce the issue
+   - Error messages or screenshots
+
+<CardGroup cols={2}>
+  <Card title="Common Fixes" icon="wrench">
+    - Add Proguard rules for Android
+    - Rebuild after installation
+    - Use correct locale for date format
+    - Check minimum version requirements
+  </Card>
+  <Card title="Platform Limitations" icon="triangle-exclamation">
+    - iOS font size cannot be changed easily
+    - Month/year only picker not supported
+    - Expo Go not supported (use dev builds)
+    - Date order tied to locale
+  </Card>
+</CardGroup>

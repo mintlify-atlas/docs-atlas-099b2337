@@ -1,0 +1,168 @@
+---
+title: Introduction
+description: A cross-platform datetime picker for React Native with native iOS and Android components
+---
+
+# React Native Date Picker
+
+React Native Date Picker is a cross-platform datetime picker component that provides a native look and feel on both iOS and Android. It leverages native code from each platform to deliver the genuine user experience that users expect.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Cross-Platform Support" icon="mobile">
+    Works seamlessly on iOS, Android, and Expo projects
+  </Card>
+  <Card title="Multiple Modes" icon="clock">
+    Three picker modes: Date, Time, and DateTime
+  </Card>
+  <Card title="Internationalization" icon="globe">
+    Support for various languages and locale-based formatting
+  </Card>
+  <Card title="Customizable" icon="palette">
+    Extensive styling options and theming support
+  </Card>
+  <Card title="Modal or Inline" icon="window">
+    Use as a modal popup or inline component
+  </Card>
+  <Card title="New Architecture" icon="microchip">
+    Full support for React Native's Fabric and Turbo Modules
+  </Card>
+</CardGroup>
+
+## Platform Support
+
+<Info>
+  This library uses native components to provide the best user experience on each platform.
+</Info>
+
+**iOS**
+- Native iOS date picker component
+- Requires Xcode >= 11.6
+- Supports iOS system date/time preferences
+
+**Android**
+- Native Android date picker component
+- Unique datetime mode that combines date and time selection
+- Customizable colors and theming
+
+**Expo**
+- Compatible with Expo SDK 42 and later
+- Works with Development Builds
+- **Note:** Not compatible with Expo Go (requires custom native code)
+
+## Requirements
+
+<Warning>
+  Make sure your environment meets these minimum requirements before installing.
+</Warning>
+
+- **Xcode** >= 11.6 (for iOS development)
+- **React Native** >= 0.57
+- **React** >= 17.0.1
+- For React Native 0.64, version 0.64.2 or later is required
+- For Expo projects:
+  - Expo SDK 42 or later
+  - If using Expo SDK 44, version 44.0.4 or later is required
+  - Must use Development Builds (not compatible with Expo Go)
+
+## Display Modes
+
+The picker offers three different modes to suit various use cases:
+
+### DateTime Mode
+
+The datetime mode allows users to select both date and time in a single picker interface. This is the default mode and is particularly useful on Android, where it avoids the need for two separate picker popups.
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="datetime"
+/>
+```
+
+### Date Mode
+
+The date mode displays only date selection (year, month, day). The order of date components adjusts automatically based on the locale.
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="date"
+/>
+```
+
+### Time Mode
+
+The time mode shows only time selection. The AM/PM format is automatically adjusted based on locale and device settings.
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+/>
+```
+
+## Usage Patterns
+
+### Modal Pattern
+
+Use the built-in modal for a controlled popup experience:
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+### Inline Pattern
+
+Embed the picker directly in your view:
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+/>
+```
+
+## Why React Native Date Picker?
+
+<Note>
+  The datetime mode on Android is particularly unique, providing a superior user experience by combining date and time selection in a single interface.
+</Note>
+
+This library was created to provide a genuine native experience on both platforms. A strong motivation was the datetime mode on Android, which is quite unique for the platform and avoids two different picker popups that would normally be necessary. Instead, this datetime mode requires fewer user actions and enables a great user experience.
+
+## React Native's New Architecture
+
+This package fully supports React Native's new architecture (Fabric + Turbo Modules) from React Native 0.71 and forward. Support was introduced in version 4.3.0 of react-native-date-picker.
+
+<Tip>
+  If you're using React Native 0.71 or later with the new architecture enabled, this library will automatically use Fabric components for improved performance.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Get started by installing the library
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Build your first date picker
+  </Card>
+</CardGroup>

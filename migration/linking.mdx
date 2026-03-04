@@ -1,0 +1,278 @@
+---
+title: Linking Guide
+description: Manual and automatic linking instructions for React Native Date Picker
+---
+
+## Automatic Linking (Recommended)
+
+React Native Date Picker supports automatic linking for React Native 0.60 and above. In most cases, no manual linking is required.
+
+### Standard Installation
+
+1. Install the package:
+
+```bash
+# npm
+npm install react-native-date-picker
+
+# yarn
+yarn add react-native-date-picker
+
+# pnpm
+pnpm add react-native-date-picker
+```
+
+2. Install iOS dependencies (skip for Expo projects):
+
+```bash
+cd ios && pod install
+```
+
+3. Rebuild your project:
+
+```bash
+# Non-Expo projects
+npx react-native run-ios
+npx react-native run-android
+
+# Expo projects
+npx expo run:ios
+npx expo run:android
+```
+
+## React Native < 0.60
+
+For projects using React Native versions below 0.60, automatic linking is not available. You'll need to link the package manually.
+
+### Using react-native link
+
+```bash
+npx react-native link react-native-date-picker
+```
+
+Then rebuild your project:
+
+```bash
+npx react-native run-ios
+npx react-native run-android
+```
+
+## Manual Linking
+
+If automatic linking fails or you're experiencing issues, you can manually link the package.
+
+### iOS Manual Linking
+
+1. Open your project in Xcode (`ios/YourProject.xcworkspace`)
+
+2. In the project navigator, right-click on `Libraries` → `Add Files to [Your Project]`
+
+3. Navigate to `node_modules/react-native-date-picker/ios` and add `RNDatePicker.xcodeproj`
+
+4. In your project's target, go to `Build Phases` → `Link Binary With Libraries`
+
+5. Add `libRNDatePicker.a` from the `RNDatePicker.xcodeproj`
+
+6. Clean and rebuild:
+   ```bash
+   cd ios
+   rm -rf build
+   cd ..
+   npx react-native run-ios
+   ```
+
+### Android Manual Linking
+
+#### 1. Update `android/settings.gradle`
+
+Add the following:
+
+```gradle
+include ':react-native-date-picker'
+project(':react-native-date-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-date-picker/android')
+```
+
+#### 2. Update `android/app/build.gradle`
+
+Add the dependency:
+
+```gradle
+dependencies {
+    implementation project(':react-native-date-picker')
+    // ... other dependencies
+}
+```
+
+#### 3. Update `MainApplication.java`
+
+For React Native < 0.60, add the package to your application:
+
+```java
+import com.henninghall.date_picker.DatePickerPackage;
+
+public class MainApplication extends Application implements ReactApplication {
+
+  @Override
+  protected List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+      new MainReactPackage(),
+      new DatePickerPackage()  // Add this line
+    );
+  }
+}
+```
+
+#### 4. Rebuild
+
+```bash
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+```
+
+## Troubleshooting
+
+### iOS Issues
+
+#### "Library not found"
+
+1. Ensure pods are installed:
+   ```bash
+   cd ios && pod install
+   ```
+
+2. Clean the build folder:
+   ```bash
+   cd ios
+   rm -rf build
+   xcodebuild clean
+   ```
+
+3. Open Xcode and clean the build folder (`Cmd + Shift + K`)
+
+4. Rebuild:
+   ```bash
+   npx react-native run-ios
+   ```
+
+#### "Module not found"
+
+1. Verify the package is in `node_modules`:
+   ```bash
+   ls node_modules/react-native-date-picker
+   ```
+
+2. Reinstall dependencies:
+   ```bash
+   rm -rf node_modules
+   npm install  # or yarn install
+   cd ios && pod install
+   ```
+
+3. Reset Metro bundler cache:
+   ```bash
+   npx react-native start --reset-cache
+   ```
+
+### Android Issues
+
+#### "Could not resolve"
+
+If you see dependency resolution errors:
+
+1. Sync Gradle files in Android Studio
+
+2. Clean the build:
+   ```bash
+   cd android
+   ./gradlew clean
+   ```
+
+3. Rebuild:
+   ```bash
+   npx react-native run-android
+   ```
+
+#### "Duplicate class found"
+
+This may occur if the library is linked multiple times:
+
+1. For React Native >= 0.60, remove manual linking from `settings.gradle` and `build.gradle`
+
+2. Clean and rebuild:
+   ```bash
+   cd android && ./gradlew clean
+   cd ..
+   npx react-native run-android
+   ```
+
+### General Linking Issues
+
+#### Verify Installation
+
+Check that the package is properly installed:
+
+```bash
+# Check package.json
+cat package.json | grep react-native-date-picker
+
+# Check node_modules
+ls -la node_modules/react-native-date-picker
+```
+
+#### Clear All Caches
+
+```bash
+# Clear Metro bundler cache
+npx react-native start --reset-cache
+
+# Clear npm/yarn cache
+npm cache clean --force
+# or
+yarn cache clean
+
+# Reinstall dependencies
+rm -rf node_modules
+npm install  # or yarn install
+```
+
+#### Rebuild Everything
+
+```bash
+# iOS
+cd ios
+rm -rf build Pods Podfile.lock
+pod install
+cd ..
+npx react-native run-ios
+
+# Android
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+```
+
+## Verification
+
+After linking, verify the package works by running this simple test:
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+import { View } from 'react-native'
+
+const App = () => (
+  <View>
+    <DatePicker date={new Date()} onDateChange={() => {}} />
+  </View>
+)
+```
+
+If the component renders without errors, linking was successful.
+
+## Additional Resources
+
+- [React Native Linking Documentation](https://reactnative.dev/docs/linking-libraries-ios)
+- [GitHub Issues for Linking Problems](https://github.com/henninghall/react-native-date-picker/issues/40)
+- [Troubleshooting Guide](/guides/troubleshooting)

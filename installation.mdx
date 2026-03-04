@@ -1,0 +1,207 @@
+---
+title: Installation
+description: Install React Native Date Picker in your project
+---
+
+# Installation
+
+Follow these steps to install and configure React Native Date Picker in your project.
+
+## Step 1: Install the Package
+
+Choose your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install react-native-date-picker
+```
+
+```bash yarn
+yarn add react-native-date-picker
+```
+
+```bash pnpm
+pnpm add react-native-date-picker
+```
+
+</CodeGroup>
+
+## Step 2: Install iOS Dependencies
+
+<Note>
+  If you're using Expo, skip this step. Expo handles native dependencies automatically.
+</Note>
+
+For non-Expo projects, you need to install CocoaPods dependencies:
+
+```bash
+cd ios && pod install
+```
+
+After the pod installation completes, navigate back to your project root:
+
+```bash
+cd ..
+```
+
+## Step 3: Rebuild Your Project
+
+After installing the package and dependencies, you must rebuild your project to link the native code.
+
+### For Expo Projects
+
+<Warning>
+  This library requires custom native code and will NOT work with Expo Go. You must use Development Builds.
+</Warning>
+
+Build and run for each platform:
+
+<CodeGroup>
+
+```bash iOS
+npx expo run:ios
+```
+
+```bash Android
+npx expo run:android
+```
+
+</CodeGroup>
+
+<Accordion title="What are Expo Development Builds?">
+  Development Builds are custom versions of Expo Go that include your custom native code. Learn more in the [Expo documentation](https://docs.expo.dev/development/introduction/).
+</Accordion>
+
+### For Non-Expo Projects
+
+Build and run for each platform:
+
+<CodeGroup>
+
+```bash iOS
+npx react-native run-ios
+```
+
+```bash Android
+npx react-native run-android
+```
+
+</CodeGroup>
+
+## Verification
+
+To verify the installation was successful, import the component in your app:
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+```
+
+If the import works without errors, you're ready to use the date picker!
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Linking Issues">
+  This package supports automatic linking. If you're experiencing linking issues:
+
+  **For React Native >= 0.60:**
+  
+  The package should link automatically. Try cleaning and rebuilding:
+  
+  ```bash
+  # iOS
+  cd ios && pod install && cd ..
+  npx react-native run-ios
+  
+  # Android
+  cd android && ./gradlew clean && cd ..
+  npx react-native run-android
+  ```
+
+  **For React Native < 0.60:**
+  
+  Run manual linking:
+  
+  ```bash
+  npx react-native link react-native-date-picker
+  ```
+
+  If automatic linking fails, you may need to link manually. Check the [GitHub issues](https://github.com/henninghall/react-native-date-picker/issues/40) for manual linking instructions.
+</Accordion>
+
+<Accordion title="Android Proguard Configuration">
+  If you've enabled Proguard for Android builds, you may experience crashes in production. Add these rules to your `proguard-rules.pro` file:
+
+  ```proguard
+  -keep public class net.time4j.android.ApplicationStarter
+  -keep public class net.time4j.PrettyTime
+  ```
+
+  This prevents Proguard from obfuscating required classes.
+</Accordion>
+
+<Accordion title="Expo Go Not Supported">
+  This library cannot be used in the Expo Go app because it requires custom native code.
+
+  **Solution:** Use Expo Development Builds instead:
+
+  1. Install the package: `npx expo install react-native-date-picker`
+  2. Create a development build: `npx expo run:ios` or `npx expo run:android`
+  3. No config plugin is required
+
+  Learn more about [Development Builds](https://docs.expo.dev/workflow/customizing/).
+</Accordion>
+
+<Accordion title="iOS Build Errors">
+  If you encounter build errors on iOS:
+
+  1. Ensure you're using Xcode >= 11.6
+  2. Clean the build folder in Xcode (Cmd + Shift + K)
+  3. Delete `ios/Pods` and `ios/Podfile.lock`
+  4. Reinstall pods: `cd ios && pod install && cd ..`
+  5. Rebuild: `npx react-native run-ios`
+</Accordion>
+
+<Accordion title="Android Build Errors">
+  If you encounter build errors on Android:
+
+  1. Clean the build:
+     ```bash
+     cd android && ./gradlew clean && cd ..
+     ```
+  
+  2. Clear the cache:
+     ```bash
+     npx react-native start --reset-cache
+     ```
+  
+  3. Rebuild:
+     ```bash
+     npx react-native run-android
+     ```
+</Accordion>
+
+</AccordionGroup>
+
+## Version Requirements
+
+<Info>
+  Make sure your project meets these minimum version requirements.
+</Info>
+
+| Dependency | Minimum Version | Notes |
+|------------|----------------|-------|
+| React Native | 0.57 | For RN 0.64, use 0.64.2 or later |
+| React | 17.0.1 | Peer dependency |
+| Xcode | 11.6 | iOS development only |
+| Expo SDK | 42 | For Expo SDK 44, use 44.0.4 or later |
+
+## Next Steps
+
+Now that you've installed the library, let's create your first date picker:
+
+<Card title="Quick Start Guide" icon="rocket" href="/quickstart">
+  Learn how to implement your first date picker
+</Card>

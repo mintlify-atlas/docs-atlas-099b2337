@@ -1,97 +1,174 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "React Native Date Picker"
+mode: "custom"
 ---
 
-## Setting up
+<div className="relative overflow-hidden dark:bg-[#020627] bg-white py-20">
+  <div className="max-w-6xl mx-auto px-6">
+    <div className="grid lg:grid-cols-12 gap-8 items-center">
+      <div className="lg:col-span-7">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold dark:text-white text-gray-900 mb-6">
+          Native Date & Time Picker for React Native
+        </h1>
+        <p className="text-base sm:text-lg dark:text-gray-400 text-gray-600 mb-8 max-w-2xl">
+          A cross-platform datetime picker component with native iOS and Android implementations. Choose from date, time, or datetime modes with modal and inline display options.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a 
+            href="/quickstart" 
+            className="inline-flex items-center px-6 py-3 rounded-lg bg-[#848c8e] text-white font-semibold hover:bg-[#6a7375] transition-colors no-underline"
+          >
+            Get Started
+          </a>
+          <a 
+            href="/api/props" 
+            className="inline-flex items-center px-6 py-3 rounded-lg border dark:border-white/30 border-gray-300 dark:bg-white/10 bg-gray-50 dark:text-white text-gray-900 font-semibold dark:hover:bg-white/20 hover:bg-gray-100 transition-colors no-underline"
+          >
+            View API Reference
+          </a>
+        </div>
+      </div>
+      <div className="lg:col-span-5 flex justify-center">
+        <img 
+          src="https://raw.githubusercontent.com/henninghall/react-native-date-picker/master/docs/react-native-datetime-picker-modal-ios.gif" 
+          alt="React Native Date Picker in action" 
+          className="rounded-2xl shadow-2xl w-full max-w-sm"
+          noZoom
+        />
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-4">Quick start</h2>
+  <p className="text-base dark:text-gray-400 text-gray-600 mb-8">Get up and running with React Native Date Picker in minutes</p>
+  
+  <Steps>
+    <Step title="Install the package">
+      Install react-native-date-picker using your preferred package manager.
+      
+      <CodeGroup>
+      ```bash npm
+      npm install react-native-date-picker
+      ```
+      ```bash yarn
+      yarn add react-native-date-picker
+      ```
+      ```bash pnpm
+      pnpm add react-native-date-picker
+      ```
+      </CodeGroup>
+    </Step>
+    
+    <Step title="Install iOS dependencies">
+      For non-Expo projects, install the CocoaPods dependencies.
+      
+      ```bash
+      cd ios && pod install
+      ```
+      
+      <Note>Expo projects can skip this step when using Development Builds.</Note>
+    </Step>
+    
+    <Step title="Import and use the picker">
+      Import DatePicker and add it to your component. Here's a modal example:
+      
+      ```jsx
+      import React, { useState } from 'react'
+      import { Button } from 'react-native'
+      import DatePicker from 'react-native-date-picker'
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+      export default () => {
+        const [date, setDate] = useState(new Date())
+        const [open, setOpen] = useState(false)
 
-## Make it yours
+        return (
+          <>
+            <Button title="Open" onPress={() => setOpen(true)} />
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              onConfirm={(date) => {
+                setOpen(false)
+                setDate(date)
+              }}
+              onCancel={() => {
+                setOpen(false)
+              }}
+            />
+          </>
+        )
+      }
+      ```
+    </Step>
+  </Steps>
+</div>
 
-Design a docs site that looks great and empowers your users.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-4">Key features</h2>
+  <p className="text-base dark:text-gray-400 text-gray-600 mb-8">Everything you need for date and time selection in your React Native app</p>
+  
+  <CardGroup cols={2}>
+    <Card title="Cross-platform" icon="mobile" href="/installation">
+      Native implementations for iOS and Android with consistent behavior and authentic platform look and feel.
+    </Card>
+    <Card title="Three picker modes" icon="calendar" href="/guides/modes">
+      Choose between date, time, or datetime modes to match your use case perfectly.
+    </Card>
+    <Card title="Modal & inline display" icon="window" href="/guides/modal-vs-inline">
+      Use the built-in modal or render the picker inline within your custom UI.
+    </Card>
+    <Card title="Customizable appearance" icon="palette" href="/guides/customization">
+      Customize colors, themes, and text to match your app's design system.
+    </Card>
+    <Card title="Multi-language support" icon="globe" href="/guides/localization">
+      Support for various languages and locales with automatic date format adjustments.
+    </Card>
+    <Card title="New architecture ready" icon="rocket" href="/migration/new-architecture">
+      Full support for React Native's new architecture with Fabric and Turbo Modules.
+    </Card>
+  </CardGroup>
+</div>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-4">Explore the documentation</h2>
+  <p className="text-base dark:text-gray-400 text-gray-600 mb-8">Learn how to integrate and customize the date picker for your needs</p>
+  
+  <CardGroup cols={3}>
+    <Card title="Installation guide" icon="download" href="/installation">
+      Step-by-step installation for React Native and Expo projects.
+    </Card>
+    <Card title="API reference" icon="code" href="/api/props">
+      Complete reference for all props, callbacks, and TypeScript types.
+    </Card>
+    <Card title="Examples" icon="lightbulb" href="/examples/modal">
+      Real-world examples covering common use cases and patterns.
+    </Card>
+    <Card title="Customization" icon="paintbrush" href="/guides/customization">
+      Learn how to customize colors, themes, and appearance.
+    </Card>
+    <Card title="Troubleshooting" icon="wrench" href="/guides/troubleshooting">
+      Solutions to common issues and platform-specific gotchas.
+    </Card>
+    <Card title="Migration guides" icon="arrow-up" href="/migration/upgrading">
+      Upgrade guides and platform-specific migration notes.
+    </Card>
+  </CardGroup>
+</div>
 
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
-
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<div className="mt-20 mb-16 max-w-5xl mx-auto px-6">
+  <div className="dark:bg-[#1a1d27] bg-gray-50 dark:border-[#27272a] border-gray-200 border rounded-2xl p-8 sm:p-12">
+    <h2 className="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-4">Ready to get started?</h2>
+    <p className="text-base dark:text-gray-400 text-gray-600 mb-6 max-w-2xl">
+      Install React Native Date Picker in your project and add a beautiful, native date picker in minutes.
+    </p>
+    <a 
+      href="/quickstart" 
+      className="inline-flex items-center px-6 py-3 rounded-lg bg-[#848c8e] text-white font-semibold hover:bg-[#6a7375] transition-colors no-underline"
+    >
+      View Quickstart Guide
+    </a>
+  </div>
+</div>

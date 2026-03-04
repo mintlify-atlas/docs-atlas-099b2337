@@ -1,0 +1,282 @@
+---
+title: Customization
+description: Customize the appearance and behavior of the date picker with themes, colors, and text labels
+---
+
+React Native Date Picker provides several props to customize the visual appearance and text labels of the picker.
+
+## Theme
+
+The `theme` prop controls the overall color scheme of the picker, supporting light mode, dark mode, and automatic detection.
+
+### Theme Options
+
+- `"light"` - Force light theme
+- `"dark"` - Force dark theme
+- `"auto"` - Automatically match device appearance (default)
+
+### Usage
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+// Light theme
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  theme="light"
+/>
+
+// Dark theme
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  theme="dark"
+/>
+
+// Auto theme (matches device)
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  theme="auto"
+/>
+```
+
+### Default Behavior
+
+When `theme` is not specified or set to `"auto"`, the picker will:
+1. Detect the device's color scheme using React Native's `Appearance` API
+2. Automatically apply light or dark styling based on the device setting
+3. Update when the user changes their device theme
+
+<Info>
+The theme prop affects the overall appearance including background colors, text colors, and button colors.
+</Info>
+
+## Button Color (Android Modal Only)
+
+The `buttonColor` prop customizes the color of the confirm and cancel buttons in the modal on Android.
+
+### Usage
+
+```jsx
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  buttonColor="#007AFF"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+<Warning>
+The `buttonColor` prop only works on Android when using modal mode. It has no effect on iOS or inline pickers.
+</Warning>
+
+### Theme-Based Button Colors
+
+If you don't specify `buttonColor`, it will automatically adapt to the theme:
+- **Light theme**: Black buttons
+- **Dark theme**: White buttons
+
+## Divider Color (Android Only)
+
+The `dividerColor` prop customizes the color of the divider/separator lines in the picker on Android.
+
+### Usage
+
+```jsx
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  dividerColor="#FF5733"
+/>
+```
+
+### Theme-Based Divider Colors
+
+If you don't specify `dividerColor`, it will automatically adapt to the theme:
+- **Light theme**: Black divider
+- **Dark theme**: White divider
+
+<Note>
+The `dividerColor` prop only affects Android. iOS uses the native iOS picker styling which cannot be customized in this way.
+</Note>
+
+## Custom Text Labels (Modal Only)
+
+When using modal mode, you can customize the title, confirm button text, and cancel button text.
+
+### Title
+
+The `title` prop sets the modal's title text. Set to `null` to remove the title entirely.
+
+```jsx
+// Custom title
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  title="Select your birthday"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+
+// No title
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  title={null}
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+### Default Title Behavior
+
+If you don't specify a title, the picker will use a default based on the mode:
+- **Time mode**: "Select time"
+- **Date or DateTime mode**: "Select date"
+
+### Confirm Text
+
+The `confirmText` prop customizes the confirm button label.
+
+```jsx
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  confirmText="Done"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+**Default**: `"Confirm"`
+
+### Cancel Text
+
+The `cancelText` prop customizes the cancel button label.
+
+```jsx
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  cancelText="Go back"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+**Default**: `"Cancel"`
+
+### Complete Modal Customization Example
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button title="Pick Date" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        mode="date"
+        theme="dark"
+        title="When is your birthday?"
+        confirmText="Select"
+        cancelText="Close"
+        buttonColor="#4CAF50"
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </>
+  )
+}
+```
+
+<Warning>
+The `title`, `confirmText`, and `cancelText` props only work in modal mode. They have no effect when using inline pickers.
+</Warning>
+
+## Font Size (Android Only)
+
+To change the font size on Android, you need to modify your Android theme configuration.
+
+### Steps
+
+1. Open `android/app/src/main/res/values/styles.xml`
+2. Add the following code right above `</resources>`:
+
+```xml
+<style name="DatePickerTheme" parent="DatePickerBaseTheme">
+    <item name="android:textSize">25sp</item>
+</style>
+```
+
+3. Rebuild your Android app
+
+<Info>
+The font size cannot be changed on iOS out of the box due to platform limitations. However, some [iOS workarounds](https://github.com/henninghall/react-native-date-picker/discussions/171) are available in the community.
+</Info>
+
+## Platform-Specific Styling
+
+### Android
+
+- `buttonColor` - Customize modal button colors
+- `dividerColor` - Customize separator line colors
+- Font size via `styles.xml`
+
+### iOS
+
+- Uses native iOS picker wheels
+- Styling options are limited by iOS platform constraints
+- Respects system appearance settings
+
+### Both Platforms
+
+- `theme` - Light/dark/auto theme selection
+- `title`, `confirmText`, `cancelText` - Modal text customization
+
+## Summary of Customization Props
+
+| Prop | Type | Platform | Modal/Inline | Description |
+|------|------|----------|--------------|-------------|
+| `theme` | `"light"` \| `"dark"` \| `"auto"` | Both | Both | Overall color scheme |
+| `buttonColor` | string | Android | Modal only | Confirm/cancel button color |
+| `dividerColor` | string | Android | Both | Divider/separator line color |
+| `title` | string \| null | Both | Modal only | Modal title text |
+| `confirmText` | string | Both | Modal only | Confirm button label |
+| `cancelText` | string | Both | Modal only | Cancel button label |

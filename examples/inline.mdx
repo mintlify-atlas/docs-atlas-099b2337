@@ -1,0 +1,308 @@
+---
+title: 'Inline Picker Examples'
+description: 'Learn how to use the inline date picker directly in your views'
+---
+
+The inline mode renders the date picker directly in your component tree without a modal wrapper. This gives you full control over the picker's layout and positioning.
+
+## Basic Inline Picker
+
+The simplest inline implementation - just render the picker with a date state.
+
+```jsx
+import React, { useState } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  return <DatePicker date={date} onDateChange={setDate} />
+}
+```
+
+**What this demonstrates:**
+- No `modal` prop needed (inline is the default)
+- `date` prop sets the current date value
+- `onDateChange` callback receives date updates as the user scrolls
+- The picker updates in real-time as the user interacts with it
+
+<Note>
+  Unlike modal mode which uses `onConfirm`, inline mode uses `onDateChange` which fires immediately as the user scrolls through values.
+</Note>
+
+## Inline Picker in Custom Container
+
+Integrate the picker into your own custom layout with styling and additional UI elements.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, StyleSheet } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Pick a Date</Text>
+      <View style={styles.pickerContainer}>
+        <DatePicker
+          date={date}
+          onDateChange={setDate}
+        />
+      </View>
+      <View style={styles.resultContainer}>
+        <Text style={styles.label}>Selected Date:</Text>
+        <Text style={styles.dateText}>
+          {date.toLocaleDateString()}
+        </Text>
+        <Text style={styles.timeText}>
+          {date.toLocaleTimeString()}
+        </Text>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  pickerContainer: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  resultContainer: {
+    marginTop: 30,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  timeText: {
+    fontSize: 22,
+    color: '#555',
+  },
+})
+```
+
+**What this demonstrates:**
+- Wrapping the picker in custom views with styling
+- Adding headers, labels, and other UI elements
+- Displaying the selected date in a custom format
+- Creating a card-like design with shadows and rounded corners
+
+## Inline Picker Modes
+
+<Tabs>
+  <Tab title="DateTime Mode">
+    Default mode showing both date and time selection.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { View } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+
+      return (
+        <View>
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            mode="datetime"
+          />
+        </View>
+      )
+    }
+    ```
+
+    Perfect for scheduling appointments or events where both date and time matter.
+  </Tab>
+
+  <Tab title="Date Only">
+    Shows only year, month, and day selection.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { View } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+
+      return (
+        <View>
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            mode="date"
+          />
+        </View>
+      )
+    }
+    ```
+
+    Ideal for birthdays, deadlines, or any date-only selection.
+  </Tab>
+
+  <Tab title="Time Only">
+    Shows only hours and minutes selection.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { View } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+
+      return (
+        <View>
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            mode="time"
+          />
+        </View>
+      )
+    }
+    ```
+
+    Great for alarm clocks, reminders, or time-specific settings.
+  </Tab>
+</Tabs>
+
+## With ScrollView Integration
+
+Place the inline picker within a scrollable view for better mobile UX.
+
+```jsx
+import React, { useState } from 'react'
+import { ScrollView, View, Text, Button, StyleSheet } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  const handleSubmit = () => {
+    console.log('Selected date:', date)
+    // Handle the selected date
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.title}>Event Details</Text>
+      
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Event Name</Text>
+        {/* Your text input component */}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Event Date & Time</Text>
+        <DatePicker
+          date={date}
+          onDateChange={setDate}
+          mode="datetime"
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Description</Text>
+        {/* Your text area component */}
+      </View>
+
+      <Button title="Create Event" onPress={handleSubmit} />
+    </ScrollView>
+  )
+}
+
+const styles = StyleSheet.create({
+  scrollContent: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+  },
+  section: {
+    marginBottom: 25,
+  },
+  sectionLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#333',
+  },
+})
+```
+
+**What this demonstrates:**
+- Integrating the picker into a form layout
+- Using ScrollView for better content accessibility
+- Combining the picker with other form elements
+- Creating a complete user flow
+
+## Controlling Spinner State (Android)
+
+Track when the user is actively spinning the picker on Android.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [state, setState] = useState('idle')
+
+  return (
+    <View>
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        onStateChange={setState}
+      />
+      <Text style={{ marginTop: 20, textAlign: 'center' }}>
+        Picker state: {state}
+      </Text>
+    </View>
+  )
+}
+```
+
+**What this demonstrates:**
+- Using `onStateChange` to track spinner state (Android inline only)
+- States can be `"idle"` or `"spinning"`
+- Useful for disabling buttons or showing loading indicators while user is scrolling
+
+<Warning>
+  The `onStateChange` prop only works with inline mode on Android. It's not available for modal pickers or iOS.
+</Warning>

@@ -1,0 +1,311 @@
+---
+title: Localization
+description: Learn how to localize the date picker with different languages, date formats, and time preferences
+---
+
+React Native Date Picker provides comprehensive localization support through the `locale` prop and related configuration options.
+
+## Locale Prop
+
+The `locale` prop accepts a [Locale ID](https://developer.apple.com/library/content/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) that determines:
+
+- Date order (year-month-day vs day-month-year, etc.)
+- Language of weekday/month names
+- 12/24-hour time format preference
+- AM/PM display
+
+### Basic Usage
+
+```jsx
+import DatePicker from 'react-native-date-picker'
+
+// French locale
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="fr"
+/>
+
+// Japanese locale
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="ja"
+/>
+
+// Spanish locale
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  locale="es"
+/>
+```
+
+### Common Locale IDs
+
+| Language | Locale ID | Example |
+|----------|-----------|----------|
+| English (US) | `en` or `en_US` | Month/Day/Year, 12-hour |
+| French | `fr` | Day/Month/Year, 24-hour |
+| German | `de` | Day.Month.Year, 24-hour |
+| Japanese | `ja` | Year/Month/Day, 24-hour |
+| Spanish | `es` | Day/Month/Year, 24-hour |
+| Chinese (Simplified) | `zh` or `zh_CN` | Year/Month/Day, 24-hour |
+| Portuguese (Brazil) | `pt_BR` | Day/Month/Year, 24-hour |
+| Korean | `ko` | Year. Month. Day, 12-hour |
+
+<Info>
+You can use any valid locale identifier. The picker will adapt the date/time format to match that locale's conventions.
+</Info>
+
+## Date Order
+
+The locale automatically determines the order in which date components appear.
+
+### Example: Different Date Orders
+
+```jsx
+// US English - Month/Day/Year
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="date"
+  locale="en_US"
+/>
+
+// French - Day/Month/Year
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="date"
+  locale="fr"
+/>
+
+// Japanese - Year/Month/Day
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="date"
+  locale="ja"
+/>
+```
+
+<Note>
+The date order is determined by the locale preference and cannot be customized independently. To change the date order, use a locale that has your preferred format.
+</Note>
+
+## 12-Hour vs 24-Hour Format
+
+The time format (12-hour with AM/PM vs 24-hour) is influenced by the locale and device settings.
+
+### iOS Behavior
+
+On iOS, the `locale` prop determines the 12/24-hour format:
+
+```jsx
+// French locale uses 24-hour format
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="fr"
+/>
+
+// US English locale uses 12-hour format with AM/PM
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="en_US"
+/>
+```
+
+### Android Behavior
+
+On Android, the 12/24-hour format is determined by the **device settings** by default, regardless of the locale prop.
+
+### is24hourSource Prop (Android Only)
+
+Use `is24hourSource` to control how the 24-hour format is determined on Android:
+
+- `"device"` - Use device settings (default on Android)
+- `"locale"` - Use locale preference (default on iOS)
+
+```jsx
+// Android: Use locale to determine 12/24-hour format
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="fr"
+  is24hourSource="locale"
+/>
+```
+
+<Warning>
+It is NOT recommended to force a specific 12/24-hour format as this goes against user preferences. If you must enforce a format, choose a locale with the desired preference and set `is24hourSource="locale"`.
+</Warning>
+
+### Platform Comparison
+
+| Platform | Default Behavior | Can Override? |
+|----------|------------------|---------------|
+| iOS | Uses locale setting | No (always locale-based) |
+| Android | Uses device setting | Yes (via `is24hourSource="locale"`) |
+
+## AM/PM Display
+
+When using 12-hour format, the AM/PM selector appears automatically. The display is controlled by:
+
+1. **iOS**: The `locale` prop determines if AM/PM is shown
+2. **Android**: Device settings (or `locale` if `is24hourSource="locale"`)
+
+```jsx
+// 12-hour format with AM/PM (US English)
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="en_US"
+/>
+
+// 24-hour format, no AM/PM (French)
+<DatePicker
+  date={date}
+  onDateChange={setDate}
+  mode="time"
+  locale="fr"
+  is24hourSource="locale"
+/>
+```
+
+## Important Limitations
+
+### Modal Text Not Localized
+
+<Warning>
+The `locale` prop does NOT translate the modal's title, confirm button, or cancel button text. It only affects the picker's date/time format.
+</Warning>
+
+To localize modal text, use the `title`, `confirmText`, and `cancelText` props:
+
+```jsx
+// French locale with French modal text
+<DatePicker
+  modal
+  open={open}
+  date={date}
+  locale="fr"
+  title="Sélectionner la date"
+  confirmText="Confirmer"
+  cancelText="Annuler"
+  onConfirm={(date) => {
+    setOpen(false)
+    setDate(date)
+  }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+## Complete Localization Example
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button title="Sélectionner" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        mode="datetime"
+        locale="fr"
+        is24hourSource="locale"
+        title="Choisissez une date et une heure"
+        confirmText="Confirmer"
+        cancelText="Annuler"
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </>
+  )
+}
+```
+
+This example provides a fully French-localized experience:
+- Date format follows French conventions (Day/Month/Year)
+- 24-hour time format (no AM/PM)
+- Modal text in French
+
+## Dynamic Localization
+
+You can dynamically change the locale based on your app's language settings:
+
+```jsx
+import React, { useState } from 'react'
+import DatePicker from 'react-native-date-picker'
+import { useTranslation } from 'react-i18next' // or your i18n library
+
+export default () => {
+  const { i18n } = useTranslation()
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+  
+  // Get locale from your app's language
+  const locale = i18n.language // e.g., 'en', 'fr', 'es'
+  
+  // Get translations from your i18n system
+  const modalTexts = {
+    en: { title: 'Select date', confirm: 'Confirm', cancel: 'Cancel' },
+    fr: { title: 'Sélectionner la date', confirm: 'Confirmer', cancel: 'Annuler' },
+    es: { title: 'Seleccionar fecha', confirm: 'Confirmar', cancel: 'Cancelar' },
+  }
+  
+  const texts = modalTexts[locale] || modalTexts.en
+
+  return (
+    <DatePicker
+      modal
+      open={open}
+      date={date}
+      locale={locale}
+      is24hourSource="locale"
+      title={texts.title}
+      confirmText={texts.confirm}
+      cancelText={texts.cancel}
+      onConfirm={(date) => {
+        setOpen(false)
+        setDate(date)
+      }}
+      onCancel={() => setOpen(false)}
+    />
+  )
+}
+```
+
+## Summary
+
+<CardGroup cols={2}>
+  <Card title="Locale Prop Controls" icon="globe">
+    - Date component order
+    - Weekday/month names
+    - 12/24-hour preference (iOS always, Android with `is24hourSource="locale"`)
+  </Card>
+  <Card title="Manual Localization" icon="language">
+    - Modal title via `title` prop
+    - Button text via `confirmText` and `cancelText`
+    - Use with i18n libraries for dynamic translations
+  </Card>
+</CardGroup>

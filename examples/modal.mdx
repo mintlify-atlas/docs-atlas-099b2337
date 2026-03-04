@@ -1,0 +1,275 @@
+---
+title: 'Modal Picker Examples'
+description: 'Learn how to use the built-in modal date picker with various configurations and callbacks'
+---
+
+The modal mode provides a built-in modal dialog that handles the picker UI, overlay, and confirmation/cancel actions. This is the recommended approach for most use cases.
+
+## Basic Modal Picker
+
+The simplest modal implementation with open/close state management and date selection.
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button title="Open" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </>
+  )
+}
+```
+
+**What this demonstrates:**
+- Setting `modal={true}` enables modal mode
+- `open` prop controls modal visibility
+- `onConfirm` receives the selected date when user confirms
+- `onCancel` is called when user cancels or taps outside the modal
+
+## Modal with Callbacks and Display
+
+A complete example showing how to display the selected date and handle both confirmation and cancellation.
+
+```jsx
+import React, { useState } from 'react'
+import { Button, View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date('2000-01-01'))
+  const [open, setOpen] = useState(false)
+
+  return (
+    <View style={{ alignItems: 'center' }}>
+      <Button
+        title="Select date"
+        onPress={() => setOpen(true)}
+      />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+      <Text style={{ marginTop: 20, fontSize: 26 }}>
+        {date.toISOString().substr(0, 10)}
+      </Text>
+      <Text style={{ marginTop: 20, fontSize: 26 }}>
+        {date.toLocaleTimeString()}
+      </Text>
+    </View>
+  )
+}
+```
+
+**What this demonstrates:**
+- Setting an initial date value
+- Displaying both date and time portions of the selected date
+- Formatting dates using built-in JavaScript methods
+
+## Modal Picker Variations
+
+<Tabs>
+  <Tab title="Custom Button Text">
+    Customize the confirm and cancel button text to match your app's language or style.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { Button } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+      const [open, setOpen] = useState(false)
+
+      return (
+        <>
+          <Button title="Pick a date" onPress={() => setOpen(true)} />
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            confirmText="Done"
+            cancelText="Close"
+            title="Select your date"
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
+          />
+        </>
+      )
+    }
+    ```
+
+    **Available text customization props:**
+    - `title` - Modal title (can be set to `null` to remove)
+    - `confirmText` - Text for the confirm button
+    - `cancelText` - Text for the cancel button
+  </Tab>
+
+  <Tab title="With Theme">
+    Control the modal appearance with light, dark, or auto theme.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { Button } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+      const [open, setOpen] = useState(false)
+
+      return (
+        <>
+          <Button title="Open Dark Modal" onPress={() => setOpen(true)} />
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            theme="dark"
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
+          />
+        </>
+      )
+    }
+    ```
+
+    **Available themes:**
+    - `"light"` - Light theme
+    - `"dark"` - Dark theme  
+    - `"auto"` - Automatically matches system theme (default)
+  </Tab>
+
+  <Tab title="Android Button Colors">
+    Customize button and divider colors on Android.
+
+    ```jsx
+    import React, { useState } from 'react'
+    import { Button } from 'react-native'
+    import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+      const [open, setOpen] = useState(false)
+
+      return (
+        <>
+          <Button title="Open" onPress={() => setOpen(true)} />
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            buttonColor="#5856D6"
+            dividerColor="#5856D6"
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
+          />
+        </>
+      )
+    }
+    ```
+
+    **Android-only styling props:**
+    - `buttonColor` - Color of confirm and cancel buttons
+    - `dividerColor` - Color of the divider/separator
+  </Tab>
+</Tabs>
+
+## Different Picker Modes
+
+The modal picker supports three different modes for different use cases.
+
+<Tabs>
+  <Tab title="DateTime (Default)">
+    Select both date and time in a single picker.
+
+    ```jsx
+    <DatePicker
+      modal
+      open={open}
+      date={date}
+      mode="datetime"
+      onConfirm={(date) => {
+        setOpen(false)
+        setDate(date)
+      }}
+      onCancel={() => setOpen(false)}
+    />
+    ```
+  </Tab>
+
+  <Tab title="Date Only">
+    Select only the date (year, month, day).
+
+    ```jsx
+    <DatePicker
+      modal
+      open={open}
+      date={date}
+      mode="date"
+      onConfirm={(date) => {
+        setOpen(false)
+        setDate(date)
+      }}
+      onCancel={() => setOpen(false)}
+    />
+    ```
+  </Tab>
+
+  <Tab title="Time Only">
+    Select only the time (hours and minutes).
+
+    ```jsx
+    <DatePicker
+      modal
+      open={open}
+      date={date}
+      mode="time"
+      onConfirm={(date) => {
+        setOpen(false)
+        setDate(date)
+      }}
+      onCancel={() => setOpen(false)}
+    />
+    ```
+  </Tab>
+</Tabs>

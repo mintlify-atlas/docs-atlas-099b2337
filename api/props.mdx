@@ -1,0 +1,356 @@
+---
+title: 'Props Reference'
+description: 'Complete reference for all DatePicker component properties'
+---
+
+## Overview
+
+The DatePicker component accepts all standard `ViewProps` from React Native, plus the following date picker-specific properties.
+
+## Required Props
+
+<ParamField path="date" type="Date" required>
+  The currently selected date.
+
+  This prop is required and must be a JavaScript `Date` object. The picker will display this date and allow users to modify it.
+
+  ```jsx
+  const [date, setDate] = useState(new Date())
+  <DatePicker date={date} />
+  ```
+</ParamField>
+
+## Mode Configuration
+
+<ParamField path="mode" type="'date' | 'time' | 'datetime'" default="datetime">
+  The date picker mode that determines what the user can select.
+
+  - `"date"` - Only date selection (year, month, day)
+  - `"time"` - Only time selection (hours, minutes)
+  - `"datetime"` - Both date and time selection
+
+  ```jsx
+  <DatePicker date={date} mode="date" />
+  ```
+</ParamField>
+
+## Modal Props
+
+<ParamField path="modal" type="boolean" default={false}>
+  Enables the built-in modal wrapper for the date picker.
+
+  When set to `true`, the picker will be displayed in a modal dialog. This requires using the modal-specific props (`open`, `onConfirm`, `onCancel`).
+
+  ```jsx
+  <DatePicker modal open={open} date={date} />
+  ```
+</ParamField>
+
+<ParamField path="open" type="boolean">
+  Modal only. Controls whether the modal is visible.
+
+  Set to `true` to open the modal, `false` to close it. This prop only works when `modal={true}`.
+
+  ```jsx
+  const [open, setOpen] = useState(false)
+  <DatePicker modal open={open} date={date} />
+  ```
+</ParamField>
+
+<ParamField path="onConfirm" type="(date: Date) => void">
+  Modal only. Callback invoked when the user presses the confirm button.
+
+  Receives the selected date as a parameter. Typically used to update state and close the modal.
+
+  ```jsx
+  <DatePicker
+    modal
+    open={open}
+    date={date}
+    onConfirm={(selectedDate) => {
+      setOpen(false)
+      setDate(selectedDate)
+    }}
+  />
+  ```
+</ParamField>
+
+<ParamField path="onCancel" type="() => void">
+  Modal only. Callback invoked when the user presses the cancel button or closes the modal by pressing outside.
+
+  Typically used to close the modal without updating the selected date.
+
+  ```jsx
+  <DatePicker
+    modal
+    open={open}
+    date={date}
+    onCancel={() => setOpen(false)}
+  />
+  ```
+</ParamField>
+
+## Inline Props
+
+<ParamField path="onDateChange" type="(date: Date) => void">
+  Inline only. Date change handler called when the user changes the date or time in the UI.
+
+  This callback is invoked continuously as the user scrolls through the picker. The first and only argument is a `Date` object representing the new date and time.
+
+  ```jsx
+  <DatePicker date={date} onDateChange={setDate} />
+  ```
+</ParamField>
+
+## Date Range Constraints
+
+<ParamField path="minimumDate" type="Date">
+  Minimum selectable date that restricts the range of possible date/time values.
+
+  Users will not be able to select dates before this value.
+
+  ```jsx
+  <DatePicker
+    date={date}
+    minimumDate={new Date('2021-01-01')}
+  />
+  ```
+</ParamField>
+
+<ParamField path="maximumDate" type="Date">
+  Maximum selectable date that restricts the range of possible date/time values.
+
+  Users will not be able to select dates after this value.
+
+  ```jsx
+  <DatePicker
+    date={date}
+    maximumDate={new Date('2021-12-31')}
+  />
+  ```
+</ParamField>
+
+## Time Configuration
+
+<ParamField path="minuteInterval" type="1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30">
+  The interval at which minutes can be selected.
+
+  For example, setting this to `15` will only allow selection of minutes at 0, 15, 30, and 45.
+
+  ```jsx
+  <DatePicker
+    date={date}
+    mode="time"
+    minuteInterval={15}
+  />
+  ```
+</ParamField>
+
+<ParamField path="is24hourSource" type="'locale' | 'device'" default="device (Android), locale (iOS)">
+  Changes how 24/12-hour format should be determined.
+
+  - `"device"` - Use the device's system settings (Android default)
+  - `"locale"` - Determine from the locale prop (iOS default, iOS cannot be changed)
+
+  Android only. iOS always uses locale.
+
+  ```jsx
+  <DatePicker
+    date={date}
+    locale="en_GB"
+    is24hourSource="locale"
+  />
+  ```
+</ParamField>
+
+<ParamField path="timeZoneOffsetInMinutes" type="number">
+  Timezone offset in minutes.
+
+  By default, the date picker uses the device's timezone. With this parameter, you can force a certain timezone offset. For instance, to show times in Pacific Standard Time, pass `-7 * 60` (-420).
+
+  ```jsx
+  <DatePicker
+    date={date}
+    timeZoneOffsetInMinutes={-420} // PST
+  />
+  ```
+</ParamField>
+
+## Localization
+
+<ParamField path="locale" type="string">
+  The locale for the date picker.
+
+  Changes language, date order, and AM/PM preferences. Value needs to be a valid [Locale ID](https://developer.apple.com/library/content/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html).
+
+  Examples: `"en"`, `"fr"`, `"es"`, `"de"`, `"en_GB"`, `"zh"`, `"ja"`
+
+  ```jsx
+  <DatePicker date={date} locale="fr" />
+  ```
+</ParamField>
+
+## Styling Props
+
+<ParamField path="theme" type="'light' | 'dark' | 'auto'" default="auto">
+  The color theme of the picker.
+
+  - `"light"` - Light theme
+  - `"dark"` - Dark theme  
+  - `"auto"` - Automatically matches system theme
+
+  ```jsx
+  <DatePicker date={date} theme="dark" />
+  ```
+</ParamField>
+
+<ParamField path="buttonColor" type="string">
+  Color of the confirm and cancel buttons in the Android modal.
+
+  Android modal only. Accepts any valid color string (hex, rgb, named colors).
+
+  ```jsx
+  <DatePicker
+    modal
+    date={date}
+    buttonColor="#FF5722"
+  />
+  ```
+</ParamField>
+
+<ParamField path="dividerColor" type="string">
+  Color of the divider/separator line in the picker.
+
+  Android only. Accepts any valid color string (hex, rgb, named colors).
+
+  ```jsx
+  <DatePicker date={date} dividerColor="#CCCCCC" />
+  ```
+</ParamField>
+
+## Modal Text Customization
+
+<ParamField path="title" type="string | null">
+  Modal only. The title text displayed at the top of the modal.
+
+  Set to `null` to remove the title completely.
+
+  ```jsx
+  <DatePicker
+    modal
+    date={date}
+    title="Select a date"
+  />
+  ```
+</ParamField>
+
+<ParamField path="confirmText" type="string">
+  Modal only. Text for the confirm button.
+
+  Use this to customize the button text or provide translations.
+
+  ```jsx
+  <DatePicker
+    modal
+    date={date}
+    confirmText="Done"
+  />
+  ```
+</ParamField>
+
+<ParamField path="cancelText" type="string">
+  Modal only. Text for the cancel button.
+
+  Use this to customize the button text or provide translations.
+
+  ```jsx
+  <DatePicker
+    modal
+    date={date}
+    cancelText="Close"
+  />
+  ```
+</ParamField>
+
+## Event Handlers
+
+<ParamField path="onStateChange" type="(state: 'spinning' | 'idle') => void">
+  Spinner state change handler.
+
+  Called when the user starts to spin the picker wheel and when the spinner stops. Can be used to disable a confirm button until the spinner comes to a complete stop to ensure the expected date is being selected.
+
+  Android inline only.
+
+  ```jsx
+  const [isSpinning, setIsSpinning] = useState(false)
+  
+  <DatePicker
+    date={date}
+    onStateChange={(state) => {
+      setIsSpinning(state === 'spinning')
+    }}
+  />
+  <Button disabled={isSpinning} title="Confirm" />
+  ```
+</ParamField>
+
+## Usage Examples
+
+### Basic Modal Example
+
+```jsx
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button title="Open" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+    </>
+  )
+}
+```
+
+### Basic Inline Example
+
+```jsx
+import React, { useState } from 'react'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  return <DatePicker date={date} onDateChange={setDate} />
+}
+```
+
+### Advanced Configuration
+
+```jsx
+<DatePicker
+  date={date}
+  mode="datetime"
+  locale="en_GB"
+  minimumDate={new Date('2020-01-01')}
+  maximumDate={new Date('2030-12-31')}
+  minuteInterval={15}
+  theme="dark"
+  onDateChange={setDate}
+/>
+```

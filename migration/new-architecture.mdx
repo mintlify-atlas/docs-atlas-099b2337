@@ -1,0 +1,354 @@
+---
+title: New Architecture Support
+description: React Native's new architecture (Fabric + Turbo Modules) support in React Native Date Picker
+---
+
+## Overview
+
+React Native Date Picker fully supports React Native's new architecture, including both Fabric (the new rendering system) and Turbo Modules (the new native modules system).
+
+### Requirements
+
+- **React Native**: Version 0.71 or later
+- **react-native-date-picker**: Version 4.3.0 or later
+- **New Architecture Enabled**: Must be explicitly enabled in your React Native project
+
+## What is the New Architecture?
+
+React Native's new architecture consists of two main components:
+
+### Fabric
+
+Fabric is the new rendering system that replaces the legacy renderer. It provides:
+
+- Improved performance and responsiveness
+- Better type safety
+- Simplified threading model
+- Synchronous layout and rendering
+
+### Turbo Modules
+
+Turbo Modules replace the legacy native modules system with:
+
+- Lazy loading of native modules
+- Type-safe JavaScript-to-native communication
+- Reduced bridge overhead
+- Better performance for native module calls
+
+## Enabling New Architecture
+
+### iOS
+
+In your `ios/Podfile`, enable the new architecture:
+
+```ruby
+# Set the new architecture flag
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+```
+
+Then reinstall pods:
+
+```bash
+cd ios
+rm -rf Pods Podfile.lock
+pod install
+cd ..
+```
+
+### Android
+
+In your `android/gradle.properties`, enable the new architecture:
+
+```properties
+newArchEnabled=true
+```
+
+### Rebuild Your App
+
+After enabling the new architecture, rebuild your app:
+
+```bash
+# iOS
+npx react-native run-ios
+
+# Android
+npx react-native run-android
+```
+
+## Codegen Configuration
+
+React Native Date Picker includes a Codegen configuration that automatically generates the necessary code for the new architecture.
+
+### Configuration Details
+
+The package includes the following Codegen configuration in `package.json`:
+
+```json
+{
+  "codegenConfig": {
+    "name": "RNDatePickerSpecs",
+    "type": "all",
+    "jsSrcsDir": "src/fabric",
+    "android": {
+      "javaPackageName": "com.henninghall.date_picker"
+    },
+    "ios": {
+      "componentProvider": {
+        "RNDatePicker": "RNDatePicker"
+      },
+      "modulesProvider": {
+        "RNDatePicker": "RNDatePickerManager"
+      }
+    }
+  }
+}
+```
+
+This configuration ensures that:
+
+- Fabric component specs are generated for both platforms
+- Turbo Module specs are created for native module communication
+- Type-safe interfaces are maintained between JavaScript and native code
+
+## How It Works
+
+### Automatic Architecture Detection
+
+The library automatically detects whether the new architecture is enabled and uses the appropriate implementation:
+
+#### Android
+
+```gradle
+def isNewArchitectureEnabled() {
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+```
+
+The build system uses different source directories based on the architecture:
+
+- **New Architecture**: `src/newarch`
+- **Legacy Architecture**: `src/oldarch`
+
+#### iOS
+
+```ruby
+if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
+  install_modules_dependencies(s)
+end
+```
+
+The Podspec automatically includes the necessary dependencies for the new architecture when enabled.
+
+### Backward Compatibility
+
+The library maintains full backward compatibility with the legacy architecture. If the new architecture is not enabled, it will automatically use the legacy implementation.
+
+## Verification
+
+To verify that the new architecture is working:
+
+### iOS
+
+1. Build your app with the new architecture enabled
+2. Check the build logs for Fabric-related compilation
+3. Look for Codegen output in the build process
+
+### Android
+
+1. Build your app:
+   ```bash
+   cd android
+   ./gradlew assembleDebug --info
+   ```
+
+2. Check the build output for:
+   - `IS_NEW_ARCHITECTURE_ENABLED: true`
+   - Codegen task execution
+   - React Android compilation with new architecture
+
+### Runtime Verification
+
+You can verify at runtime by checking that the date picker functions correctly with all features:
+
+```jsx
+import React, { useState } from 'react'
+import { View, Button, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+function App() {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  return (
+    <View>
+      <Text>Testing New Architecture</Text>
+      <Button title="Open Picker" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        mode="datetime"
+        onConfirm={(selectedDate) => {
+          setOpen(false)
+          setDate(selectedDate)
+        }}
+        onCancel={() => setOpen(false)}
+      />
+    </View>
+  )
+}
+```
+
+If the picker works correctly, the new architecture is functioning properly.
+
+## Performance Benefits
+
+With the new architecture enabled, you can expect:
+
+### Improved Rendering Performance
+
+- Faster initial render of the date picker
+- Smoother animations and transitions
+- Reduced frame drops during user interaction
+
+### Better Memory Usage
+
+- More efficient component lifecycle management
+- Reduced memory overhead from the bridge
+- Faster garbage collection
+
+### Enhanced Type Safety
+
+- Compile-time type checking for props
+- Better IDE autocomplete and IntelliSense
+- Fewer runtime errors from type mismatches
+
+## Troubleshooting
+
+### Build Failures
+
+#### iOS Build Issues
+
+If you encounter build errors after enabling the new architecture:
+
+1. Clean the build folder:
+   ```bash
+   cd ios
+   rm -rf build Pods Podfile.lock
+   pod install
+   ```
+
+2. Ensure you're using Xcode 11.6 or later
+
+3. Verify React Native version is 0.71 or later:
+   ```bash
+   cat package.json | grep react-native
+   ```
+
+#### Android Build Issues
+
+1. Clean the build:
+   ```bash
+   cd android
+   ./gradlew clean
+   ```
+
+2. Verify Gradle version compatibility
+
+3. Check that `newArchEnabled=true` is set in `gradle.properties`
+
+### Runtime Issues
+
+#### Component Not Rendering
+
+If the date picker doesn't render:
+
+1. Check that `react-native-date-picker` version is 4.3.0 or later:
+   ```bash
+   cat package.json | grep react-native-date-picker
+   ```
+
+2. Verify the new architecture is properly enabled
+
+3. Rebuild the app completely:
+   ```bash
+   # iOS
+   cd ios && rm -rf build && cd ..
+   npx react-native run-ios
+   
+   # Android
+   cd android && ./gradlew clean && cd ..
+   npx react-native run-android
+   ```
+
+#### Type Errors
+
+If you see TypeScript errors:
+
+1. Ensure you're using the latest type definitions
+2. Clear TypeScript cache:
+   ```bash
+   rm -rf node_modules/.cache
+   ```
+3. Restart your TypeScript server (in your IDE)
+
+### Reverting to Legacy Architecture
+
+If you need to revert to the legacy architecture:
+
+#### iOS
+
+Remove or comment out the flag in `ios/Podfile`:
+
+```ruby
+# ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+```
+
+Then reinstall pods:
+
+```bash
+cd ios
+rm -rf Pods Podfile.lock
+pod install
+```
+
+#### Android
+
+Set the flag to false in `android/gradle.properties`:
+
+```properties
+newArchEnabled=false
+```
+
+Then rebuild:
+
+```bash
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+```
+
+## Migration Checklist
+
+- [ ] Verify React Native version is 0.71 or later
+- [ ] Update `react-native-date-picker` to 4.3.0 or later
+- [ ] Enable new architecture in iOS (`Podfile`)
+- [ ] Enable new architecture in Android (`gradle.properties`)
+- [ ] Clean and reinstall iOS pods
+- [ ] Clean Android build
+- [ ] Rebuild both platforms
+- [ ] Test all date picker features
+- [ ] Verify modal and inline modes
+- [ ] Test on physical devices
+
+## Learn More
+
+- [React Native New Architecture Documentation](https://reactnative.dev/docs/the-new-architecture/landing-page)
+- [Fabric Renderer](https://reactnative.dev/docs/fabric-renderer)
+- [Turbo Modules](https://reactnative.dev/docs/turbo-modules)
+- [Codegen](https://reactnative.dev/docs/the-new-architecture/pillars-codegen)

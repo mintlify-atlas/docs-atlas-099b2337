@@ -1,0 +1,557 @@
+---
+title: 'Advanced Examples'
+description: 'Advanced date picker configurations including date ranges, intervals, timezones, and localization'
+---
+
+Explore advanced features and configurations for more complex use cases.
+
+## Date Ranges with Min/Max Dates
+
+Restrict selectable dates to a specific range using `minimumDate` and `maximumDate`.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  // Only allow dates within the next 30 days
+  const today = new Date()
+  const maxDate = new Date()
+  maxDate.setDate(today.getDate() + 30)
+
+  return (
+    <>
+      <Button title="Select Date" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        minimumDate={today}
+        maximumDate={maxDate}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => setOpen(false)}
+      />
+      <Text>Selected: {date.toLocaleDateString()}</Text>
+    </>
+  )
+}
+```
+
+**What this demonstrates:**
+- Setting `minimumDate` to prevent selecting past dates
+- Setting `maximumDate` to limit future date selection
+- Useful for booking systems, appointment scheduling, or date-sensitive forms
+
+## Advanced Date Range Example
+
+<Tabs>
+  <Tab title="Booking Dates">
+    Restrict date selection to a booking window (e.g., 7 days from now to 90 days out).
+
+    ```jsx
+    import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date())
+
+      // Bookings must be at least 7 days in advance
+      const minDate = new Date()
+      minDate.setDate(minDate.getDate() + 7)
+
+      // But not more than 90 days out
+      const maxDate = new Date()
+      maxDate.setDate(maxDate.getDate() + 90)
+
+      return (
+        <View>
+          <Text>Select your reservation date:</Text>
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            mode="date"
+            minimumDate={minDate}
+            maximumDate={maxDate}
+          />
+        </View>
+      )
+    }
+    ```
+  </Tab>
+
+  <Tab title="Age Verification">
+    Ensure users are above a certain age (e.g., 18 years old).
+
+    ```jsx
+    import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [birthdate, setBirthdate] = useState(new Date(2000, 0, 1))
+
+      // Maximum birthdate for 18+ (18 years ago from today)
+      const maxDate = new Date()
+      maxDate.setFullYear(maxDate.getFullYear() - 18)
+
+      // Minimum reasonable birthdate (120 years ago)
+      const minDate = new Date()
+      minDate.setFullYear(minDate.getFullYear() - 120)
+
+      return (
+        <View>
+          <Text>Enter your date of birth:</Text>
+          <DatePicker
+            date={birthdate}
+            onDateChange={setBirthdate}
+            mode="date"
+            minimumDate={minDate}
+            maximumDate={maxDate}
+          />
+        </View>
+      )
+    }
+    ```
+  </Tab>
+
+  <Tab title="Historical Dates">
+    Select dates within a historical period.
+
+    ```jsx
+    import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+    export default () => {
+      const [date, setDate] = useState(new Date(2000, 0, 1))
+
+      // Historical period: 1900 to 2000
+      const minDate = new Date(1900, 0, 1)
+      const maxDate = new Date(2000, 11, 31)
+
+      return (
+        <View>
+          <Text>Select a historical date:</Text>
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            mode="date"
+            minimumDate={minDate}
+            maximumDate={maxDate}
+          />
+        </View>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Minute Intervals
+
+Control the granularity of time selection with minute intervals.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+
+  return (
+    <View>
+      <Text>Select time (15-minute intervals):</Text>
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        mode="time"
+        minuteInterval={15}
+      />
+      <Text style={{ marginTop: 20 }}>
+        Selected: {date.toLocaleTimeString()}
+      </Text>
+    </View>
+  )
+}
+```
+
+**What this demonstrates:**
+- `minuteInterval` restricts selectable minutes to specific increments
+- Accepts values: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30
+- Perfect for appointment booking systems with set time slots
+
+## Minute Interval Variations
+
+<Tabs>
+  <Tab title="15-Minute Slots">
+    ```jsx
+    <DatePicker
+      date={date}
+      onDateChange={setDate}
+      mode="time"
+      minuteInterval={15}
+    />
+    ```
+    Common for appointment scheduling (9:00, 9:15, 9:30, 9:45, etc.)
+  </Tab>
+
+  <Tab title="30-Minute Slots">
+    ```jsx
+    <DatePicker
+      date={date}
+      onDateChange={setDate}
+      mode="time"
+      minuteInterval={30}
+    />
+    ```
+    Perfect for half-hour increments (9:00, 9:30, 10:00, etc.)
+  </Tab>
+
+  <Tab title="5-Minute Slots">
+    ```jsx
+    <DatePicker
+      date={date}
+      onDateChange={setDate}
+      mode="time"
+      minuteInterval={5}
+    />
+    ```
+    Fine-grained control for precise scheduling
+  </Tab>
+</Tabs>
+
+## Timezone Offsets
+
+Display and select times in different timezones using `timeZoneOffsetInMinutes`.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [timezone, setTimezone] = useState(undefined) // undefined = device timezone
+
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 18, marginBottom: 10 }}>Select Timezone:</Text>
+      
+      <View style={{ flexDirection: 'row', gap: 10, marginBottom: 20 }}>
+        <Button
+          title="Local"
+          onPress={() => setTimezone(undefined)}
+        />
+        <Button
+          title="UTC"
+          onPress={() => setTimezone(0)}
+        />
+        <Button
+          title="EST (UTC-5)"
+          onPress={() => setTimezone(-5 * 60)}
+        />
+        <Button
+          title="JST (UTC+9)"
+          onPress={() => setTimezone(9 * 60)}
+        />
+      </View>
+
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        mode="datetime"
+        timeZoneOffsetInMinutes={timezone}
+      />
+
+      <Text style={{ marginTop: 20 }}>
+        Current timezone: {timezone === undefined ? 'Local' : `UTC${timezone >= 0 ? '+' : ''}${timezone / 60}`}
+      </Text>
+      <Text>Selected: {date.toLocaleString()}</Text>
+    </View>
+  )
+}
+```
+
+**What this demonstrates:**
+- `timeZoneOffsetInMinutes` accepts offset in minutes from UTC
+- `undefined` uses the device's current timezone (default)
+- Positive values for east of UTC, negative for west
+- Calculate: `hours * 60` (e.g., UTC+5:30 = 330 minutes)
+
+## Localization
+
+Customize the picker's language, date format, and 12/24-hour display.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [locale, setLocale] = useState('en-US')
+
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 18, marginBottom: 10 }}>Select Language:</Text>
+      
+      <View style={{ flexDirection: 'row', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+        <Button title="English (US)" onPress={() => setLocale('en-US')} />
+        <Button title="English (GB)" onPress={() => setLocale('en-GB')} />
+        <Button title="French" onPress={() => setLocale('fr-FR')} />
+        <Button title="Korean" onPress={() => setLocale('ko-KR')} />
+        <Button title="Japanese" onPress={() => setLocale('ja-JP')} />
+        <Button title="Spanish" onPress={() => setLocale('es-ES')} />
+      </View>
+
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        mode="datetime"
+        locale={locale}
+      />
+
+      <Text style={{ marginTop: 20 }}>Current locale: {locale}</Text>
+      <Text>Selected: {date.toLocaleString(locale)}</Text>
+    </View>
+  )
+}
+```
+
+**What this demonstrates:**
+- `locale` prop accepts standard locale identifiers (e.g., 'en-US', 'fr-FR', 'ja-JP')
+- Changes language of month/day names
+- Adjusts date component order (MDY vs DMY vs YMD)
+- Controls 12/24-hour time format based on locale conventions
+- "Today" text is translated automatically
+
+<Note>
+  The locale only affects the picker UI itself. To change the modal's confirm/cancel button text, use the `confirmText` and `cancelText` props.
+</Note>
+
+## Complete Advanced Configuration
+
+Combine multiple advanced features for a production-ready implementation.
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState('datetime')
+
+  // Business hours: 9 AM to 5 PM, next 14 days
+  const minDate = new Date()
+  minDate.setHours(9, 0, 0, 0)
+  
+  const maxDate = new Date()
+  maxDate.setDate(maxDate.getDate() + 14)
+  maxDate.setHours(17, 0, 0, 0)
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Schedule Appointment</Text>
+
+      <View style={styles.modeSelector}>
+        <Button
+          title="Date & Time"
+          onPress={() => setMode('datetime')}
+        />
+        <Button
+          title="Date Only"
+          onPress={() => setMode('date')}
+        />
+        <Button
+          title="Time Only"
+          onPress={() => setMode('time')}
+        />
+      </View>
+
+      <Button
+        title="Select Appointment Time"
+        onPress={() => setOpen(true)}
+      />
+
+      <DatePicker
+        modal
+        open={open}
+        date={date}
+        mode={mode}
+        minimumDate={minDate}
+        maximumDate={maxDate}
+        minuteInterval={15}
+        locale="en-US"
+        title="Select Your Preferred Time"
+        confirmText="Confirm"
+        cancelText="Cancel"
+        theme="auto"
+        onConfirm={(selectedDate) => {
+          setOpen(false)
+          setDate(selectedDate)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
+
+      <View style={styles.result}>
+        <Text style={styles.label}>Scheduled for:</Text>
+        <Text style={styles.dateText}>
+          {date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </Text>
+        <Text style={styles.timeText}>
+          {date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </Text>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f8f9fa',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modeSelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+    gap: 10,
+  },
+  result: {
+    marginTop: 30,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  label: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  timeText: {
+    fontSize: 18,
+    color: '#555',
+  },
+})
+```
+
+**What this demonstrates:**
+- Combining min/max dates, minute intervals, and localization
+- Dynamic mode switching
+- Custom text and theming
+- Professional date/time formatting
+- Complete user experience flow
+
+## Controlling Spinner State for Custom Buttons
+
+Disable confirm buttons while the user is actively scrolling (Android inline only).
+
+```jsx
+import React, { useState } from 'react'
+import { View, Text, Button, StyleSheet } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+
+export default () => {
+  const [date, setDate] = useState(new Date())
+  const [state, setState] = useState('idle')
+
+  const handleConfirm = () => {
+    if (state === 'spinning') {
+      alert('Please wait for the picker to stop spinning')
+      return
+    }
+    // Process the selected date
+    console.log('Confirmed:', date)
+  }
+
+  return (
+    <View style={styles.container}>
+      <DatePicker
+        date={date}
+        onDateChange={setDate}
+        onStateChange={setState}
+        mode="datetime"
+      />
+      
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Confirm Selection"
+          onPress={handleConfirm}
+          disabled={state === 'spinning'}
+        />
+      </View>
+
+      <Text style={styles.status}>
+        Status: {state === 'spinning' ? 'Adjusting...' : 'Ready'}
+      </Text>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    marginTop: 20,
+    width: '100%',
+  },
+  status: {
+    marginTop: 10,
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#666',
+  },
+})
+```
+
+**What this demonstrates:**
+- Using `onStateChange` to track picker state
+- Disabling buttons while user is scrolling
+- Providing visual feedback about picker status
+- Preventing accidental submissions
+
+<Warning>
+  The `onStateChange` callback only works with inline pickers on Android. It is not available for modal pickers or on iOS.
+</Warning>
