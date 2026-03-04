@@ -132,7 +132,7 @@ The DatePicker component accepts all standard `ViewProps` from React Native, plu
 
 ## Time Configuration
 
-<ParamField path="minuteInterval" type="1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30">
+<ParamField path="minuteInterval" type="1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30" default={1}>
   The interval at which minutes can be selected.
 
   For example, setting this to `15` will only allow selection of minutes at 0, 15, 30, and 45.
@@ -230,10 +230,10 @@ The DatePicker component accepts all standard `ViewProps` from React Native, plu
 
 ## Modal Text Customization
 
-<ParamField path="title" type="string | null">
+<ParamField path="title" type="string | null" default="Select date (or Select time for time mode)">
   Modal only. The title text displayed at the top of the modal.
 
-  Set to `null` to remove the title completely.
+  Set to `null` to remove the title completely. Default title is "Select date" for date/datetime modes and "Select time" for time mode.
 
   ```jsx
   <DatePicker
@@ -244,7 +244,7 @@ The DatePicker component accepts all standard `ViewProps` from React Native, plu
   ```
 </ParamField>
 
-<ParamField path="confirmText" type="string">
+<ParamField path="confirmText" type="string" default="Confirm">
   Modal only. Text for the confirm button.
 
   Use this to customize the button text or provide translations.
@@ -258,7 +258,7 @@ The DatePicker component accepts all standard `ViewProps` from React Native, plu
   ```
 </ParamField>
 
-<ParamField path="cancelText" type="string">
+<ParamField path="cancelText" type="string" default="Cancel">
   Modal only. Text for the cancel button.
 
   Use this to customize the button text or provide translations.
