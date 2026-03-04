@@ -1,0 +1,88 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "React Native Date Picker",
+  "projectDescription": "A cross-platform datetime picker component for React Native with native iOS and Android implementations.",
+  "theme": "palm",
+  "primaryColor": "#848c8e",
+  "lightColor": "#11161e",
+  "darkColor": "#cfd0d2",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Guides",
+        "pages": [
+          "guides/modes",
+          "guides/modal-vs-inline",
+          "guides/customization",
+          "guides/localization",
+          "guides/troubleshooting"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api/props",
+          "api/typescript"
+        ]
+      },
+      {
+        "group": "Examples",
+        "pages": [
+          "examples/modal",
+          "examples/inline",
+          "examples/advanced"
+        ]
+      },
+      {
+        "group": "Migration & Platform Notes",
+        "pages": [
+          "migration/upgrading",
+          "migration/expo",
+          "migration/linking",
+          "migration/new-architecture"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Cross-platform support for iOS and Android",
+    "Three picker modes: date, time, and datetime",
+    "Modal and inline display options",
+    "Multi-language and locale support",
+    "Customizable appearance with themes and colors",
+    "Minute interval configuration",
+    "Date range restrictions with min/max dates",
+    "Timezone offset support",
+    "React Native new architecture (Fabric + Turbo Modules) support"
+  ],
+  "publicApiSurface": [
+    "DatePicker (default export)",
+    "date prop",
+    "mode prop (date|time|datetime)",
+    "modal prop",
+    "onDateChange callback",
+    "onConfirm callback",
+    "onCancel callback",
+    "locale prop",
+    "minimumDate prop",
+    "maximumDate prop",
+    "minuteInterval prop",
+    "theme prop (light|dark|auto)",
+    "timeZoneOffsetInMinutes prop",
+    "is24hourSource prop",
+    "onStateChange callback",
+    "confirmText prop",
+    "cancelText prop",
+    "title prop",
+    "buttonColor prop",
+    "dividerColor prop"
+  ]
+}
